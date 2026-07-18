@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<title>OneStop DriveIn - హాజరు & జీతం</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiT25lU3RvcCBEcml2ZUluIEhSIiwic2hvcnRfbmFtZSI6IkhSIFRyYWNrZXIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZBRjZFRCIsInRoZW1lX2NvbG9yIjoiIzE2NDIzQyJ9">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-900:#0F3630;
+    --teal-800:#16423C;
+    --teal-700:#1F5A50;
+    --gold-500:#D9A227;
+    --gold-600:#B9860F;
+    --paper:#FAF6ED;
+    --card:#FFFFFF;
+    --ink:#2B2620;
+    --ink-soft:#6B6255;
+    --line:#E8E0CE;
+    --present:#4C7A51;
+    --half:#D9A227;
+    --absent:#B84C3E;
+    --danger:#B84C3E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans Telugu','Noto Sans',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:78px;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Poppins','Noto Sans Telugu',sans-serif;}
+
+  header{
+    background:var(--teal-800);
+    color:#fff;
+    padding:18px 18px 22px;
+    position:sticky; top:0; z-index:30;
+    box-shadow:0 4px 14px rgba(15,54,48,0.18);
+  }
+  header .brand{font-size:12px; letter-spacing:.14em; text-transform:uppercase; opacity:.72; font-weight:600;}
+  header h1{font-size:20px; margin:2px 0 0; font-weight:700;}
+  header .sub{font-size:13px; opacity:.78; margin-top:2px;}
+  .sync-status{font-size:11px; margin-top:6px; opacity:.9; display:flex; align-items:center; gap:5px;}
+  .sync-status::before{content:'●'; font-size:9px;}
+  .sync-status.ok{color:#BFE8C4;}
+  .sync-status.ok::before{color:#6FD17E;}
+  .sync-status.bad{color:#F3CFC5;}
+  .sync-status.bad::before{color:#E8836C;}
+
+  .period-strip{
+    display:flex; align-items:center; gap:8px;
+    margin-top:14px; background:rgba(255,255,255,0.08);
+    border-radius:12px; padding:8px 10px;
+  }
+  .period-strip button{
+    background:rgba(255,255,255,0.14); border:none; color:#fff;
+    width:32px; height:32px; border-radius:8px; font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .period-strip .period-label{flex:1; text-align:center; font-size:13.5px; font-weight:600;}
+  .period-strip .period-label .range{display:block; font-size:11.5px; font-weight:400; opacity:.75; margin-top:1px;}
+
+  .daydots{display:flex; gap:5px; margin-top:12px; overflow-x:auto; padding-bottom:2px;}
+  .daydot{
+    flex:0 0 auto; width:30px; text-align:center; font-size:10.5px;
+    color:rgba(255,255,255,0.85);
+  }
+  .daydot .dow{opacity:.6; font-size:9.5px;}
+  .daydot .num{
+    width:26px; height:26px; margin:2px auto 0; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.10); font-weight:600;
+  }
+  .daydot.today .num{outline:2px solid var(--gold-500); outline-offset:1px;}
+  .daydot.selected .num{background:var(--gold-500); color:var(--teal-900);}
+
+  main{padding:16px; max-width:520px; margin:0 auto;}
+  .card{
+    background:var(--card); border-radius:16px; padding:14px 14px;
+    box-shadow:0 1px 3px rgba(43,38,32,0.06); margin-bottom:12px;
+    border:1px solid var(--line);
+  }
+  .worker-row{display:flex; align-items:center; gap:10px; padding:8px 2px;}
+  .worker-row + .worker-row{border-top:1px solid var(--line);}
+  .avatar{
+    width:38px; height:38px; border-radius:50%; background:var(--teal-800); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex:0 0 auto;
+  }
+  .wname{font-weight:600; font-size:14.5px;}
+  .wname .en{display:block; font-size:11px; color:var(--ink-soft); font-weight:400;}
+  .status-btns{display:flex; gap:5px; margin-left:auto;}
+  .sbtn{
+    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
+    border-radius:9px; padding:7px 9px; font-size:12px; font-weight:600;
+    min-width:44px;
+  }
+  .sbtn.p.active{background:var(--present); border-color:var(--present); color:#fff;}
+  .sbtn.h.active{background:var(--half); border-color:var(--half); color:#fff;}
+  .sbtn.a.active{background:var(--absent); border-color:var(--absent); color:#fff;}
+
+  .section-title{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); font-weight:700; margin:6px 2px 8px;}
+
+  .salary-card .top{display:flex; align-items:center; gap:10px;}
+  .salary-card .rate-input{
+    margin-left:auto; text-align:right;
+  }
+  .rate-input input{
+    width:92px; padding:6px 8px; border:1.5px solid var(--line); border-radius:8px;
+    font-size:13px; text-align:right; font-family:inherit; color:var(--ink);
+  }
+  .rate-input label{display:block; font-size:10px; color:var(--ink-soft); margin-bottom:2px;}
+  .breakdown{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:13px;}
+  .breakdown .row{display:flex; justify-content:space-between; padding:3px 0; color:var(--ink-soft);}
+  .breakdown .row.net{color:var(--ink); font-weight:700; font-size:15px; border-top:1px solid var(--line); margin-top:4px; padding-top:7px;}
+  .breakdown .row.net .amt{color:var(--teal-800);}
+  .pill{display:inline-block; padding:1px 7px; border-radius:20px; font-size:11px; font-weight:600; margin-left:6px;}
+  .pill.present{background:#E5F0E4; color:var(--present);}
+  .pill.half{background:#FBF0DA; color:var(--gold-600);}
+  .pill.absent{background:#F6E2DD; color:var(--absent);}
+  .absdates{font-size:11.5px; background:#FBECE8; border:1px solid #EBC9C0; border-radius:9px;
+    padding:6px 9px; margin:4px 0 2px; line-height:1.55; color:#8A3B2A;}
+  .absdates b{color:#7A2A1A;}
+  .breakdown .row.warn{color:#B4472A;}
+  .breakdown .row.warn span:last-child{font-weight:700;}
+  .wtab-intro{font-size:12.5px; color:var(--ink); background:#FFF8EC; border:1px solid #F0E0C0;
+    border-radius:10px; padding:9px 11px; margin-bottom:12px; line-height:1.6;}
+  .wcount-grid{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px;}
+  .wcount-chip{display:flex; align-items:center; gap:6px; background:var(--card);
+    border:1px solid var(--line); border-radius:22px; padding:4px 10px 4px 5px; font-size:12px;
+    color:var(--ink); font-family:inherit; cursor:pointer;}
+  .wcount-chip .avatar{width:24px; height:24px; font-size:12px;}
+  .wcount-chip .n{font-weight:700; min-width:12px; text-align:center;}
+  .wlog-item{display:flex; align-items:center; gap:10px; padding:9px 2px; border-bottom:1px solid var(--line);}
+  .wlog-item:last-child{border-bottom:0;}
+  .wlog-item .meta{flex:1; min-width:0;}
+  .wlog-del{border:0; background:transparent; color:var(--absent); font-size:17px; padding:2px 8px; cursor:pointer;}
+  .wn-hint{font-size:12px; color:var(--gold-600); background:#FFF8EC; border-radius:8px;
+    padding:7px 9px; margin:-2px 0 10px; line-height:1.5;}
+
+  .add-advance-btn{
+    width:100%; padding:10px; margin-top:10px; border:1.5px dashed var(--gold-600);
+    background:#FDF7E9; color:var(--gold-600); border-radius:10px; font-weight:700; font-size:13px;
+  }
+  .tip-row .tipwrap{ display:inline-flex; align-items:center; gap:2px; color:var(--present); font-weight:700; }
+  .tip-row input{
+    width:70px; padding:3px 6px; border:1.5px solid var(--line); border-radius:6px;
+    font-size:13px; text-align:right; font-family:inherit; color:var(--ink);
+  }
+  .lx-tot.lx-net{ border-top:1px solid var(--line); margin-top:4px; padding-top:8px; }
+  .lx-tot.lx-net span:first-child{ font-weight:700; color:var(--ink); }
+  .outstanding-note{
+    margin-top:10px; padding:8px 10px; background:#FBEFEC; border-radius:8px;
+    font-size:12.5px; color:var(--absent);
+  }
+  .period-hint{
+    margin:-4px 0 10px; padding:7px 9px; border-radius:8px; font-size:11.5px;
+    background:#EFF7EF; color:var(--present); line-height:1.45;
+  }
+  .period-hint.bad{ background:#FBEFEC; color:var(--absent); font-weight:600; }
+  .outstanding-note .adj{ display:block; margin-top:3px; font-size:11.5px; opacity:.9; }
+  .deduct-btn{
+    border-color:var(--present); background:#EFF7EF; color:var(--present); margin-top:8px;
+  }
+  .pay-btn{
+    border:0; background:var(--present); color:#fff; margin-top:8px;
+    width:100%; padding:11px; border-radius:10px; font-weight:700; font-size:13.5px;
+  }
+  .paid-banner{
+    margin-top:10px; padding:9px 11px; background:#EAF6EC; border:1px solid #BFE3C6;
+    border-radius:10px; font-size:12.5px; color:var(--present); display:flex;
+    align-items:center; gap:8px; line-height:1.5;
+  }
+  .paid-banner .undo{
+    margin-left:auto; background:none; border:0; color:var(--ink-soft);
+    font-size:11.5px; text-decoration:underline; padding:2px 0; flex-shrink:0;
+  }
+  .salary-card.is-paid{opacity:.72;}
+  .pill.paid{background:#EAF6EC; color:var(--present);}
+
+  .adv-item{display:flex; align-items:center; gap:10px; padding:8px 2px;}
+  .adv-item + .adv-item{border-top:1px solid var(--line);}
+  .adv-item .meta{flex:1;}
+  .adv-item .amt{font-weight:700; color:var(--absent);}
+  .adv-item .del{background:none; border:none; color:var(--ink-soft); font-size:16px; padding:4px 8px;}
+  .owe-item{display:flex; align-items:center; gap:10px; padding:8px 2px;}
+  .owe-item + .owe-item{border-top:1px solid var(--line);}
+  .owe-item .meta{flex:1; min-width:0;}
+  .owe-item .bal{font-weight:700;}
+  .owe-item .sub{font-size:10.5px; color:var(--ink-soft);}
+  .owe-total{display:flex; justify-content:space-between; padding:9px 2px 2px; margin-top:4px;
+    border-top:1.5px solid var(--line); font-weight:700; font-size:14px;}
+
+  .empty{text-align:center; color:var(--ink-soft); font-size:13px; padding:22px 10px;}
+
+  .summary-total{
+    background:var(--teal-800); color:#fff; border-radius:16px; padding:16px;
+    margin-bottom:14px;
+  }
+  .summary-total .label{font-size:12px; opacity:.75; text-transform:uppercase; letter-spacing:.08em;}
+  .summary-total .val{font-size:26px; font-weight:700; font-family:'Poppins',sans-serif; margin-top:2px;}
+  .summary-total .sub-row{display:flex; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.16); font-size:13px;}
+  .summary-total .sub-row div span{display:block; font-size:15px; font-weight:700; margin-top:1px;}
+
+  nav.tabbar{
+    position:fixed; bottom:0; left:0; right:0; background:#fff;
+    border-top:1px solid var(--line); display:flex; z-index:30;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.tabbar button{
+    flex:1; border:none; background:none; padding:9px 1px 7px; font-family:inherit;
+    color:var(--ink-soft); font-size:9.5px; font-weight:600; display:flex; flex-direction:column; align-items:center; gap:2px;
+    line-height:1.15; white-space:nowrap;
+  }
+  nav.tabbar button .ic{font-size:17px;}
+  nav.tabbar button.active{color:var(--teal-800);}
+  nav.tabbar button.active .ic{filter: drop-shadow(0 0 0 var(--teal-800));}
+
+  .modal-bg{
+    position:fixed; inset:0; background:rgba(15,54,48,0.45); z-index:50;
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .modal{
+    background:#fff; border-radius:18px 18px 0 0; padding:20px; width:100%; max-width:520px;
+    animation:slideup .18s ease-out;
+  }
+  @keyframes slideup{from{transform:translateY(20px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .modal h3{margin:0 0 14px; font-size:16px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px; font-weight:600;}
+  .field select, .field input{
+    width:100%; padding:10px 11px; border:1.5px solid var(--line); border-radius:10px;
+    font-size:14px; font-family:inherit; color:var(--ink);
+  }
+  .modal-actions{display:flex; gap:8px; margin-top:16px;}
+  .btn{flex:1; padding:12px; border-radius:10px; border:none; font-weight:700; font-size:14px; font-family:inherit;}
+  .btn.primary{background:var(--teal-800); color:#fff;}
+  .btn.ghost{background:var(--paper); color:var(--ink-soft); border:1.5px solid var(--line);}
+
+  .loading{padding:40px; text-align:center; color:var(--ink-soft);}
+
+  /* ---- Laxman container ledger ---- */
+  .lx-row{display:flex; align-items:center; gap:10px; padding:8px 2px;}
+  .lx-row + .lx-row{border-top:1px solid var(--line);}
+  .lx-row .lbl{flex:1; font-size:13.5px; font-weight:600; min-width:0;}
+  .lx-row .lbl span{display:block; font-size:10.5px; color:var(--ink-soft); font-weight:400;}
+  .lx-row input{
+    width:82px; padding:7px 8px; border:1.5px solid var(--line); border-radius:8px;
+    font-size:14px; text-align:right; font-family:inherit; color:var(--ink); flex:0 0 auto;
+  }
+  .lx-row .unit{font-size:11px; color:var(--ink-soft); width:44px; flex:0 0 auto;}
+  .lx-sub{font-size:12px; color:var(--ink-soft); background:#FBF7EE; border-radius:8px;
+    padding:7px 9px; margin:8px 0 2px; line-height:1.6;}
+  .lx-sub b{color:var(--ink);}
+  .lx-cardhead{display:flex; align-items:baseline; gap:8px; margin-bottom:8px;}
+  .lx-cardhead h3{margin:0; font-size:14.5px;}
+  .lx-cardhead .tag{font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+    font-weight:700; padding:2px 7px; border-radius:20px;}
+  .tag.biweekly{background:#E5F0E4; color:var(--present);}
+  .tag.monthly{background:#FBF0DA; color:var(--gold-600);}
+  .lx-tot{display:flex; justify-content:space-between; padding:8px 2px 2px; margin-top:6px;
+    border-top:1.5px solid var(--line); font-weight:700; font-size:14px;}
+  .lx-tot .we{color:var(--absent);}
+  .lx-tot .lx{color:var(--present);}
+  .lx-row b.we{color:var(--absent); font-size:14px;}
+  .lx-row b.lx{color:var(--present); font-size:14px;}
+  .settle{background:var(--teal-800); color:#fff; border-radius:16px; padding:16px; margin-bottom:12px;}
+  .settle .label{font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:.08em;}
+  .settle .val{font-size:26px; font-weight:700; font-family:'Poppins',sans-serif; margin-top:3px; line-height:1.2;}
+  .settle .val small{display:block; font-size:12px; font-weight:400; opacity:.8; margin-top:3px; font-family:inherit;}
+  .settle .split{display:flex; justify-content:space-between; gap:10px; margin-top:13px; padding-top:13px;
+    border-top:1px solid rgba(255,255,255,0.16); font-size:12px;}
+  .settle .split div{opacity:.8;}
+  .settle .split div span{display:block; font-size:15.5px; font-weight:700; margin-top:2px; opacity:1;}
+  .lx-note{font-size:12.5px; color:var(--ink); background:#FFF8EC; border:1px solid #F0E0C0;
+    border-radius:10px; padding:9px 11px; margin-bottom:12px; line-height:1.6;}
+
+  /* ---- History (payment ledger) ---- */
+  .hist-month{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-soft); margin:14px 4px 7px; display:flex; justify-content:space-between; align-items:baseline;}
+  .hist-month .cnt{font-size:11px; font-weight:600; opacity:.8; letter-spacing:0; text-transform:none;}
+  .hist-item{display:flex; align-items:center; gap:10px; padding:10px 2px;}
+  .hist-item + .hist-item{border-top:1px solid var(--line);}
+  .hist-item .datechip{
+    flex:0 0 auto; width:46px; text-align:center; background:var(--paper); border:1px solid var(--line);
+    border-radius:9px; padding:4px 2px; line-height:1.15;
+  }
+  .hist-item .datechip .d{font-size:15px; font-weight:700; font-family:'Poppins',sans-serif;}
+  .hist-item .datechip .mo{font-size:9.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;}
+  .hist-item .meta{flex:1; min-width:0;}
+  .hist-item .meta .t{font-size:13.5px; font-weight:700;}
+  .hist-item .meta .s{font-size:10.5px; color:var(--ink-soft); margin-top:1px;}
+  .hist-item .meta .n{font-size:10.5px; color:var(--gold-600); margin-top:1px;}
+  .hist-item .amt{font-weight:700; font-size:14px; text-align:right; flex:0 0 auto;}
+  .hist-item .amt small{display:block; font-size:9.5px; font-weight:600; opacity:.8; margin-top:1px;}
+  .hist-item .amt.out{color:var(--absent);}
+  .hist-item .amt.in{color:var(--present);}
+  .hist-item .del{background:none; border:0; color:var(--ink-soft); font-size:15px; padding:4px 2px 4px 6px; flex:0 0 auto;}
+  .hist-tot{background:var(--teal-800); color:#fff; border-radius:16px; padding:15px 16px; margin-bottom:6px;}
+  .hist-tot .label{font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:.08em;}
+  .hist-tot .val{font-size:25px; font-weight:700; font-family:'Poppins',sans-serif; margin-top:2px;}
+  .hist-tot .sub-row{display:flex; justify-content:space-between; margin-top:12px; padding-top:12px;
+    border-top:1px solid rgba(255,255,255,0.16); font-size:12px;}
+  .hist-tot .sub-row div{opacity:.85;}
+  .hist-tot .sub-row div span{display:block; font-size:15px; font-weight:700; margin-top:1px; opacity:1;}
+  .hist-filter{display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 4px;}
+  .hist-filter button{
+    background:var(--card); border:1px solid var(--line); color:var(--ink-soft); font-family:inherit;
+    border-radius:22px; padding:5px 11px; font-size:11.5px; font-weight:600;
+  }
+  .hist-filter button.on{background:var(--teal-800); border-color:var(--teal-800); color:#fff;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">OneStop DriveIn</div>
+  <h1 id="headerTitle">సిబ్బంది హాజరు & జీతం</h1>
+  <div class="sub" id="headerSub">Staff Attendance &amp; Biweekly Salary</div>
+  <div class="sync-status" id="syncStatus">Connecting…</div>
+
+  <div class="period-strip" id="periodStripAttendance">
+    <button id="prevPeriod">‹</button>
+    <div class="period-label">
+      <span id="periodLabel">–</span>
+      <span class="range" id="periodRange">–</span>
+    </div>
+    <button id="nextPeriod">›</button>
+  </div>
+
+  <div class="daydots" id="dayDots"></div>
+</header>
+
+<main id="mainArea">
+  <div class="loading">లోడ్ అవుతోంది... loading</div>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="attendance" class="active"><span class="ic">📋</span>హాజరు</button>
+  <button data-tab="salary"><span class="ic">💰</span>జీతం</button>
+  <button data-tab="summary"><span class="ic">📊</span>సారాంశం</button>
+  <button data-tab="laxman"><span class="ic">🫓</span>లక్ష్మణ్</button>
+  <button data-tab="history"><span class="ic">🧾</span>చరిత్ర</button>
+  <button data-tab="warnings"><span class="ic">⚠️</span>హెచ్చరికలు</button>
+  <button data-tab="workers"><span class="ic">👥</span>సిబ్బంది</button>
+</nav>
+
+<script>
+const STORAGE_KEY = 'onestop-hr-v1';
+const TE_DOW = ['ఆది','సోమ','మంగళ','బుధ','గురు','శుక్ర','శని'];
+
+// Every worker carries a FIXED dayRate — one day's pay, never derived from month length.
+//  • biweekly staff are PAID on it (month total = dayRate × 28/30/31).
+//  • monthly staff have a FIXED monthly salary, and dayRate is what one absent day costs them.
+const DEFAULT_WORKERS = [
+  {id:'veerababu',   name:'Veerababu',   te:'వీరబాబు',    role:'Chef',                       dayRate:1200, payFreq:'biweekly'},
+  {id:'raju',        name:'Raju',        te:'రాజు',       role:'Assistant Chef',             dayRate:900,  payFreq:'biweekly'},
+  {id:'triveni',     name:'Triveni',     te:'త్రివేణి',    role:'Manager',                    monthly:12000, dayRate:400, payFreq:'monthly'},
+  {id:'laxman',      name:'Laxman',      te:'లక్ష్మణ్',    role:'Convention Hall Incharge',   monthly:15000, dayRate:500, payFreq:'monthly'},
+  {id:'venkatesh',   name:'Venkatesh',   te:'వెంకటేష్',   role:'Cleaner & Lodge Supervisor', dayRate:600,  payFreq:'biweekly'},
+  {id:'krishnavedi', name:'Krishnaveni', te:'కృష్ణవేణి',  role:'Cleaner',                    dayRate:400,  payFreq:'biweekly'},
+  {id:'manasa',      name:'Maanasa',     te:'మానసా',     role:'Cleaner',                    monthly:12000, dayRate:400, payFreq:'monthly'},
+  {id:'pachayya',    name:'Ponnaya',     te:'పొన్నయ్య',   role:'Cleaner',                    monthly:12000, dayRate:400, payFreq:'monthly'},
+];
+
+// migrate any previously-saved workers (from before roles existed, or before salary
+// switched from a biweekly figure to a monthly figure) to the new shape
+function migrateWorkers(list){
+  const byId = {};
+  DEFAULT_WORKERS.forEach(w=> byId[w.id]=w);
+  list.forEach(w=>{
+    if(!w.role){
+      if(byId[w.id]){
+        w.role = byId[w.id].role;
+        w.name = byId[w.id].name;
+        w.te = byId[w.id].te;
+      } else {
+        w.role = '';
+      }
+    }
+    if(!w.payFreq){
+      w.payFreq = byId[w.id] ? byId[w.id].payFreq : 'biweekly';
+    }
+    // Snapshot the legacy figures BEFORE any deletion — the dayRate fallback below needs them.
+    // Very old records only stored a biweekly (half-month) figure.
+    const legacyMonthly = w.monthly!=null ? w.monthly : (w.biweekly ? w.biweekly*2 : 0);
+    // every worker now carries a fixed dayRate (paid on it if biweekly, deducted at it if monthly).
+    // Old monthly figures were always day-rate × 30, so ÷30 recovers the rate exactly.
+    if(!w.dayRate){
+      w.dayRate = (byId[w.id] && byId[w.id].dayRate)
+        ? byId[w.id].dayRate
+        : Math.round(legacyMonthly/30);
+    }
+    // Only monthly staff need a monthly figure; biweekly staff are driven purely by dayRate.
+    if(w.payFreq==='monthly') w.monthly = legacyMonthly;
+    else delete w.monthly;
+    delete w.biweekly;
+  });
+  DEFAULT_WORKERS.forEach(dw=>{
+    if(!list.find(w=>w.id===dw.id)) list.push(Object.assign({}, dw));
+  });
+  return list;
+}
+
+let state = {
+  workers: [],
+  attendance: {},   // {workerId: {'YYYY-MM-DD': 'P'|'H'|'A'}}
+  advances: [],      // [{id, workerId, date, amount, note}]
+  warnings: [],      // [{id, workerId, date, reason, note, level, deduct}]
+  payments: {},      // {'workerId|2026-7-1': {date:'YYYY-MM-DD', amount, note, at}}  half = 1|2|'M'
+  tips: {},          // {'workerId|2026-7-1': 500}  tip for that period — added on top of salary
+  laxman: {          // container ledger — bread biweekly, everything else monthly
+    periods: {},     // {'2026-7-1': {roti, naan, rotiPrice, naanPrice, paid:{date,amount,note}}}
+    months: {}       // {'2026-7': {items:{...}, watchman, fee, paid:{date,amount,note}}}
+  },
+  seedVersion: 0
+};
+
+// Bread: we sell it, we keep half the sale value, Laxman gets the other half.
+const LX_ROTI_PRICE = 30;
+const LX_NAAN_PRICE = 40;
+// Cleaning consumables: we buy them, Laxman reimburses half the total bill.
+const LX_ITEMS = [
+  {id:'floor',    te:'ఫ్లోర్ క్లీనర్',    en:'Floor cleaner'},
+  {id:'bath',     te:'బాత్రూమ్ క్లీనర్',  en:'Bathroom cleaner'},
+  {id:'phenol',   te:'ఫినాయిల్',        en:'Phenol'},
+  {id:'acid',     te:'యాసిడ్',          en:'Acid'},
+  {id:'handwash', te:'హ్యాండ్ వాష్',     en:'Hand wash'},
+  {id:'washliq',  te:'వాషింగ్ లిక్విడ్',  en:'Washing liquid'}
+];
+const LX_CLEANING_FEE = 1000;    // flat monthly cleaning charge Laxman pays us
+const LX_WATCHMAN_SALARY = 12000; // watchman's full monthly salary (we pay this)
+const LX_WATCHMAN_SHARE = 5000;   // Laxman's fixed contribution toward the watchman (he pays us this)
+
+function lxPeriodKey(parts){ return parts.y+'-'+parts.m+'-'+parts.half; }
+function lxMonthKey(parts){ return parts.y+'-'+parts.m; }
+function lxPeriod(parts){
+  if(!state.laxman) state.laxman = {periods:{}, months:{}};
+  if(!state.laxman.periods) state.laxman.periods = {};
+  const k = lxPeriodKey(parts);
+  if(!state.laxman.periods[k]){
+    state.laxman.periods[k] = {roti:0, naan:0, rotiPrice:LX_ROTI_PRICE, naanPrice:LX_NAAN_PRICE, paid:null};
+  }
+  const p = state.laxman.periods[k];
+  if(p.rotiPrice==null) p.rotiPrice = LX_ROTI_PRICE;
+  if(p.naanPrice==null) p.naanPrice = LX_NAAN_PRICE;
+  // p.given is legacy — the cash figure now lives on the month (see lxMonth)
+  return p;
+}
+function lxMonth(parts){
+  if(!state.laxman) state.laxman = {periods:{}, months:{}};
+  if(!state.laxman.months) state.laxman.months = {};
+  const k = lxMonthKey(parts);
+  if(!state.laxman.months[k]){
+    const items = {};
+    LX_ITEMS.forEach(it=> items[it.id] = 0);
+    state.laxman.months[k] = {items, watchman:LX_WATCHMAN_SALARY, watchmanShare:LX_WATCHMAN_SHARE, fee:LX_CLEANING_FEE, paid:null};
+  }
+  const m = state.laxman.months[k];
+  if(!m.items) m.items = {};
+  LX_ITEMS.forEach(it=>{ if(m.items[it.id]==null) m.items[it.id] = 0; });
+  if(m.fee==null) m.fee = LX_CLEANING_FEE;
+  if(m.watchman==null) m.watchman = LX_WATCHMAN_SALARY;
+  if(m.watchmanShare==null) m.watchmanShare = LX_WATCHMAN_SHARE;
+  // The whole tab settles once a month, so the cash figures live here, not per fortnight.
+  if(m.given==null){
+    // one-time carry-over from the short-lived per-fortnight "given" field
+    const ps = (state.laxman.periods||{});
+    m.given = (Number((ps[parts.y+'-'+parts.m+'-1']||{}).given)||0)
+            + (Number((ps[parts.y+'-'+parts.m+'-2']||{}).given)||0);
+  }
+  if(m.received==null) m.received = 0;
+  return m;
+}
+// What one biweekly period's bread is worth. We collect the full sale, so we owe Laxman his half.
+function lxBreadCalc(parts){
+  const p = lxPeriod(parts);
+  const rotiSale = (Number(p.roti)||0) * (Number(p.rotiPrice)||0);
+  const naanSale = (Number(p.naan)||0) * (Number(p.naanPrice)||0);
+  const sale = rotiSale + naanSale;
+  return {p, rotiSale, naanSale, sale, ourShare: sale/2, weOwe: sale/2};
+}
+// Everything Laxman owes us, all of it monthly: half the cleaning bill, Laxman's fixed
+// ₹5,000 watchman share (the watchman's full salary is ₹12,000), plus the flat ₹1,000 charge.
+function lxMonthCalc(parts){
+  const m = lxMonth(parts);
+  const itemsTotal = LX_ITEMS.reduce((s,it)=> s + (Number(m.items[it.id])||0), 0);
+  const watchman = Number(m.watchman)||0;
+  const watchmanShare = Number(m.watchmanShare)||0;
+  const fee = Number(m.fee)||0;
+  const lxOwes = itemsTotal/2 + watchmanShare + fee;   // Laxman pays his fixed share, not the full salary
+  return {m, itemsTotal, itemsHalf: itemsTotal/2, watchman, watchmanShare, watchmanOwed: watchmanShare,
+          fee, lxOwes};
+}
+// Full-month settlement: both halves of bread against the month's dues.
+// The whole Laxman tab settles as ONE figure per month:
+//   both halves of bread we owe him  −  the cleaning/watchman/charge he owes us
+//   −  cash we've handed him  +  cash he's handed us   =  what's still outstanding.
+// Positive balance = we still owe Laxman. Negative = he still owes us.
+function lxSettlement(parts){
+  const h1 = lxBreadCalc({y:parts.y, m:parts.m, half:1});
+  const h2 = lxBreadCalc({y:parts.y, m:parts.m, half:2});
+  const weOwe = h1.weOwe + h2.weOwe;
+  const mc = lxMonthCalc(parts);
+  const given = Number(mc.m.given)||0;
+  const received = Number(mc.m.received)||0;
+  const net = weOwe - mc.lxOwes;
+  return {h1, h2, weOwe, lxOwes: mc.lxOwes, mc, given, received, net,
+          balance: net - given + received};
+}
+
+// historical data transcribed from ledger photos sent on 9 Jul 2026
+const SEED_VERSION = 7;
+const SEED_ATTENDANCE = {
+  krishnavedi: { // Krishnaveni
+    '2026-06-10':'A','2026-06-27':'A','2026-06-28':'A','2026-06-29':'A',
+    '2026-06-30':'A','2026-07-05':'A','2026-07-06':'A'
+  },
+  venkatesh: {
+    '2026-06-10':'A','2026-07-05':'A','2026-07-06':'A'
+  },
+  veerababu: {
+    '2026-07-01':'H','2026-07-02':'A','2026-07-03':'A','2026-07-04':'A',
+    '2026-07-05':'A','2026-07-06':'A','2026-07-07':'H'
+  }
+};
+// each entry now carries a type: 'given' (adds to what the worker owes) or 'repaid' (reduces it),
+// so the running outstanding balance can be shown, not just the current period's deduction
+const SEED_ADVANCES = [
+  {id:'seed-veera-1', workerId:'veerababu', date:'2026-05-31', amount:9500, type:'given', note:'Advance (May 5\u201331)'},
+  {id:'seed-veera-2', workerId:'veerababu', date:'2026-06-02', amount:7000, type:'given', note:'Advance'},
+  {id:'seed-veera-3', workerId:'veerababu', date:'2026-06-02', amount:1500, type:'given', note:'Advance'},
+  {id:'seed-veera-4', workerId:'veerababu', date:'2026-06-15', amount:5000, type:'repaid', note:'Adjusted amount (repaid via salary)'},
+  {id:'seed-venk-1',  workerId:'venkatesh', date:'2026-06-08', amount:10000, type:'given', note:'Advance'},
+  {id:'seed-venk-2',  workerId:'venkatesh', date:'2026-06-08', amount:5000, type:'repaid', note:'Repaid via salary'}
+];
+const SEED_RATES = {                        // monthly staff: fixed monthly figure
+  triveni:12000, laxman:15000, manasa:12000, pachayya:12000
+};
+const SEED_DAYRATES = {                     // one day's pay — fixed for everyone (confirmed 17 Jul)
+  veerababu:1200, raju:900, venkatesh:600, krishnavedi:400,   // biweekly: paid on this
+  triveni:400, manasa:400, pachayya:400, laxman:500           // monthly: absent day costs this
+};
+function applySeedData(){
+  if((state.seedVersion||0) >= SEED_VERSION) return;
+  // attendance: only fill days that aren't already marked, so manual edits are never overwritten
+  Object.keys(SEED_ATTENDANCE).forEach(wid=>{
+    if(!state.attendance[wid]) state.attendance[wid] = {};
+    Object.keys(SEED_ATTENDANCE[wid]).forEach(date=>{
+      if(!state.attendance[wid][date]) state.attendance[wid][date] = SEED_ATTENDANCE[wid][date];
+    });
+  });
+  // advances: wipe any previously auto-seeded entries and replace with the corrected set
+  state.advances = state.advances.filter(a=> !String(a.id).startsWith('seed-'));
+  SEED_ADVANCES.forEach(seed=> state.advances.push(Object.assign({},seed)));
+  // corrected pay frequencies + display names (given 11 Jul). Applied BEFORE rates so the
+  // biweekly/monthly check below is always reading the final value.
+  // biweekly = paid per actual day; monthly = fixed salary (month length ignored), absent days deducted
+  const WORKER_FIXES = {
+    veerababu:  {payFreq:'biweekly'},
+    raju:       {payFreq:'biweekly'},
+    venkatesh:  {payFreq:'biweekly'},
+    krishnavedi:{payFreq:'biweekly'},
+    triveni:    {payFreq:'monthly'},
+    laxman:     {payFreq:'monthly'},
+    manasa:     {payFreq:'monthly', name:'Maanasa', te:'\u0C2E\u0C3E\u0C28\u0C38\u0C3E'},
+    pachayya:   {payFreq:'monthly', name:'Ponnaya', te:'\u0C2A\u0C4A\u0C28\u0C4D\u0C28\u0C2F\u0C4D\u0C2F'}
+  };
+  Object.keys(WORKER_FIXES).forEach(id=>{
+    const w = state.workers.find(x=>x.id===id);
+    if(w) Object.assign(w, WORKER_FIXES[id]);
+  });
+  // rates: apply the confirmed figures
+  Object.keys(SEED_RATES).forEach(id=>{
+    const w = state.workers.find(x=>x.id===id);
+    if(w) w.monthly = SEED_RATES[id];
+  });
+  Object.keys(SEED_DAYRATES).forEach(id=>{
+    const w = state.workers.find(x=>x.id===id);
+    if(w){
+      w.dayRate = SEED_DAYRATES[id];
+      if(w.payFreq!=='monthly') delete w.monthly;   // biweekly staff have no monthly figure
+    }
+  });
+  state.seedVersion = SEED_VERSION;
+}
+
+let currentTab = 'attendance';
+let periodOffset = 0; // 0 = period containing today (or first period)
+let selectedDate = todayStr();
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){return n<10?'0'+n:''+n;}
+function addDays(dateStr, n){
+  const d = new Date(dateStr+'T00:00:00');
+  d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function daysBetween(a,b){
+  return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000);
+}
+function fmtShort(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getDate()+' '+months[d.getMonth()];
+}
+function fmtRupee(n){
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+// ---- period math ----
+function todayParts(){
+  const d = new Date();
+  return {y:d.getFullYear(), m:d.getMonth()+1, half: d.getDate()<=15 ? 1 : 2};
+}
+function stepPeriod(parts, steps){
+  let {y,m,half} = parts;
+  while(steps>0){
+    if(half===1){ half=2; } else { half=1; m+=1; if(m>12){ m=1; y+=1; } }
+    steps--;
+  }
+  while(steps<0){
+    if(half===2){ half=1; } else { half=2; m-=1; if(m<1){ m=12; y-=1; } }
+    steps++;
+  }
+  return {y,m,half};
+}
+function currentPeriodParts(){
+  return stepPeriod(todayParts(), periodOffset);
+}
+function partsFromDate(dateStr){
+  const p = (dateStr||todayStr()).split('-').map(Number);
+  return {y:p[0], m:p[1], half: p[2]<=15 ? 1 : 2};
+}
+const FIXED_MONTH_DAYS = 30; // (legacy) kept for reference; salary math below now uses real month length
+// Actual number of calendar days in this period's month: 28, 29 (leap Feb), 30 or 31.
+function daysInMonth(parts){ return new Date(parts.y, parts.m, 0).getDate(); }
+// Central salary math shared by the Salary, Summary and History views so they never drift.
+//  • Everyone has a FIXED dayRate. It never changes with month length (28/29/30/31).
+//  • biweekly staff are PAID on it: month total = dayRate × days in month.
+//    ₹1200/day = ₹37,200 in a 31-day month, ₹36,000 in 30, ₹33,600 in 28.
+//    Each half is worth dayRate × (calendar days in that half).
+//  • monthly staff get a FIXED salary that does NOT change with month length, but every
+//    absent day (and every 2nd-level warning) costs exactly dayRate — e.g. Triveni loses
+//    ₹400 for one absence whether the month is 28 or 31 days long.
+function daySalary(w, parts){
+  if(w.dayRate) return w.dayRate;
+  return (w.monthly||0)/daysInMonth(parts);   // legacy fallback only
+}
+function computeEarned(w, parts){
+  const isMonthly = w.payFreq==='monthly';
+  const stats = isMonthly ? combinedMonthStats(w.id, parts) : periodStats(w.id, parts);
+  const missedDays = stats.absent + stats.half*0.5;
+  const dim = daysInMonth(parts);                    // 28 / 29 / 30 / 31
+  const penaltyRate = daySalary(w, parts);           // one day's pay, used for discipline deductions
+  const warns = warningsForScope(w, parts);
+  const warnDeductDays = warns.filter(x=>x.deduct).length;
+  const warningDeduction = penaltyRate*warnDeductDays;
+  if(isMonthly){
+    const full = w.monthly||0;
+    const deduction = penaltyRate*missedDays;   // fixed salary, but absent days are deducted
+    const earned = full - deduction - warningDeduction;
+    return {isMonthly:true, stats, missedDays, dim, daysThisPeriod:dim, dailyRate:penaltyRate,
+            fullPeriodAmount:full, monthTotal:full, deduction, penaltyRate, warns, warnDeductDays,
+            warningDeduction, earned};
+  }
+  const dailyRate = penaltyRate;                     // fixed ₹/day — does not shrink in a 31-day month
+  const daysThisPeriod = periodDates(parts).length;  // 15 for 1st half, dim-15 for 2nd half
+  const fullPeriodAmount = dailyRate*daysThisPeriod;
+  const monthTotal = dailyRate*dim;                  // what the whole month is worth at this rate
+  const deduction = dailyRate*missedDays;
+  return {isMonthly:false, stats, missedDays, dim, daysThisPeriod, dailyRate,
+          fullPeriodAmount, monthTotal, deduction, penaltyRate, warns, warnDeductDays,
+          warningDeduction, earned:fullPeriodAmount-deduction-warningDeduction};
+}
+// ---- salary paid tracking ----
+// One place that answers "what is actually payable to this worker for this period",
+// so the Salary tab, the Laxman tab and the History tab can never disagree.
+function salaryNet(w, parts){
+  const e = computeEarned(w, parts);
+  const advs = e.isMonthly ? combinedMonthAdvances(w.id, parts) : advancesInPeriod(w.id, parts);
+  // Only money actually TAKEN BACK from this period's salary reduces the payout.
+  // An advance that was *given* is cash he already has in hand — it raises what he
+  // owes, but it must not also shrink the salary, or he'd be charged for it twice.
+  const recovered = advs.filter(a=> a.type==='repaid').reduce((s,a)=> s + Number(a.amount), 0);
+  const givenNow  = advs.filter(a=> a.type!=='repaid').reduce((s,a)=> s + Number(a.amount), 0);
+  const owedAfter  = outstandingBalance(w.id);      // all-time given − repaid (already includes this deduction)
+  const owedBefore = owedAfter + recovered;
+  const tip = tipFor(w, parts);                     // paid on top of earnings, never touched by absences
+  return {e, advs, recovered, givenNow, advTotal: recovered, owedBefore, owedAfter, tip,
+          net: e.earned + tip - recovered};
+}
+// Tips are stored per worker per pay period, on the same key the payment record uses,
+// so a monthly worker has one tip for the month and a biweekly worker one per half.
+function tipFor(w, parts){
+  return Number((state.tips||{})[paymentKey(w, parts)]) || 0;
+}
+function setTip(w, parts, v){
+  if(!state.tips) state.tips = {};
+  const amt = Number(v)||0;
+  if(amt) state.tips[paymentKey(w, parts)] = amt;
+  else delete state.tips[paymentKey(w, parts)];
+}
+// Monthly staff are paid once for the whole month, so their key ignores the half.
+// Biweekly staff get one key per half, matching how they're actually paid.
+function paymentKey(w, parts){
+  const scope = w.payFreq==='monthly' ? 'M' : parts.half;
+  return w.id+'|'+parts.y+'-'+parts.m+'-'+scope;
+}
+function getPayment(w, parts){
+  return (state.payments||{})[paymentKey(w, parts)] || null;
+}
+function setPayment(w, parts, rec){
+  if(!state.payments) state.payments = {};
+  state.payments[paymentKey(w, parts)] = rec;
+}
+function clearPayment(w, parts){
+  if(state.payments) delete state.payments[paymentKey(w, parts)];
+}
+
+function monthHalves(parts){
+  return [{y:parts.y,m:parts.m,half:1}, {y:parts.y,m:parts.m,half:2}];
+}
+function combinedMonthStats(workerId, parts){
+  let present=0, half=0, absent=0;
+  monthHalves(parts).forEach(p=>{
+    const s = periodStats(workerId, p);
+    present+=s.present; half+=s.half; absent+=s.absent;
+  });
+  return {present, half, absent};
+}
+function combinedMonthAdvances(workerId, parts){
+  const mm = pad(parts.m);
+  const lastDay = new Date(parts.y, parts.m, 0).getDate();
+  const start = parts.y+'-'+mm+'-01';
+  const end = parts.y+'-'+mm+'-'+pad(lastDay);
+  return state.advances.filter(a=> a.workerId===workerId && a.date>=start && a.date<=end);
+}
+function periodBounds(parts){
+  const mm = pad(parts.m);
+  if(parts.half===1){
+    return { start: parts.y+'-'+mm+'-01', end: parts.y+'-'+mm+'-15' };
+  }
+  const lastDay = new Date(parts.y, parts.m, 0).getDate();
+  return { start: parts.y+'-'+mm+'-16', end: parts.y+'-'+mm+'-'+pad(lastDay) };
+}
+function periodDates(parts){
+  const b = periodBounds(parts);
+  const arr = [];
+  let d = b.start;
+  while(d <= b.end){ arr.push(d); d = addDays(d,1); }
+  return arr;
+}
+function periodTopLabel(parts){
+  const b = periodBounds(parts);
+  return parseInt(b.start.split('-')[2],10) + '\u2013' + parseInt(b.end.split('-')[2],10);
+}
+function periodBottomLabel(parts){
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parts.m-1] + ' ' + parts.y;
+}
+
+// ---- Firebase (shared real-time sync between you and your manager) ----
+const FIREBASE_URL = 'https://attendance-and-salary-tr-20681-default-rtdb.asia-southeast1.firebasedatabase.app';
+const FIREBASE_PATH = 'onestop-hr-data';
+
+function withTimeout(promise, ms){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=> setTimeout(()=>reject(new Error('timeout')), ms))
+  ]);
+}
+async function firebaseGet(){
+  const res = await withTimeout(fetch(FIREBASE_URL+'/'+FIREBASE_PATH+'.json'), 5000);
+  if(!res.ok) throw new Error('firebase get failed: '+res.status);
+  return await res.json(); // null if nothing saved yet
+}
+async function firebaseSet(data){
+  const res = await withTimeout(fetch(FIREBASE_URL+'/'+FIREBASE_PATH+'.json', {
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  }), 5000);
+  if(!res.ok) throw new Error('firebase set failed: '+res.status);
+  return true;
+}
+
+// ---- storage (local cache fallback for when Firebase is unreachable) ----
+async function storageGet(key){
+  if(typeof window.storage !== 'undefined' && window.storage){
+    try{
+      const r = await withTimeout(window.storage.get(key, false), 4000);
+      if(r) return r;
+    }catch(e){ /* fall through to localStorage */ }
+  }
+  try{
+    const v = localStorage.getItem(key);
+    return v ? {key, value:v} : null;
+  }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  let ok = false;
+  if(typeof window.storage !== 'undefined' && window.storage){
+    try{
+      const r = await withTimeout(window.storage.set(key, value, false), 4000);
+      if(r) ok = true;
+    }catch(e){ /* fall through */ }
+  }
+  try{ localStorage.setItem(key, value); ok = true; }catch(e){ /* ignore */ }
+  return ok;
+}
+
+function normalizeState(){
+  if(!state.workers || state.workers.length===0) state.workers = DEFAULT_WORKERS.map(w=>Object.assign({},w));
+  else state.workers = migrateWorkers(state.workers);
+  if(!state.attendance) state.attendance = {};
+  if(!state.advances) state.advances = [];
+  if(!state.warnings) state.warnings = [];
+  if(!state.payments) state.payments = {};
+  if(!state.tips) state.tips = {};
+  if(!state.laxman) state.laxman = {periods:{}, months:{}};
+  if(!state.laxman.periods) state.laxman.periods = {};
+  if(!state.laxman.months) state.laxman.months = {};
+  applySeedData();
+}
+
+let lastSyncTime = null;
+let lastSyncOk = false;
+function markSynced(ok){
+  lastSyncOk = ok;
+  lastSyncTime = Date.now();
+  renderSyncStatus();
+}
+function renderSyncStatus(){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  if(!lastSyncTime){ el.textContent = 'Connecting\u2026'; el.className = 'sync-status'; return; }
+  const secs = Math.floor((Date.now()-lastSyncTime)/1000);
+  const when = secs<5 ? 'just now' : secs<60 ? secs+'s ago' : Math.floor(secs/60)+'m ago';
+  el.textContent = (lastSyncOk ? 'Synced ' : 'Offline \u2013 saved on this phone ') + when;
+  el.className = 'sync-status ' + (lastSyncOk ? 'ok' : 'bad');
+}
+setInterval(renderSyncStatus, 1000);
+
+async function loadState(){
+  let remote = null;
+  try{
+    remote = await firebaseGet();
+    markSynced(true);
+  }catch(e){
+    console.error('firebase load failed, using local cache', e);
+    markSynced(false);
+  }
+
+  if(remote){
+    state = remote;
+  } else {
+    let loaded = null;
+    try{
+      const res = await storageGet(STORAGE_KEY);
+      if(res && res.value) loaded = JSON.parse(res.value);
+    }catch(e){ loaded = null; }
+    state = loaded || {workers: DEFAULT_WORKERS.map(w=>Object.assign({},w)), attendance:{}, advances:[], warnings:[], payments:{}, tips:{}, seedVersion:0};
+  }
+  normalizeState();
+  await saveState();
+}
+
+async function saveState(){
+  state.lastUpdated = Date.now();
+  try{
+    await firebaseSet(state);
+    markSynced(true);
+  }catch(e){
+    console.error('firebase save failed (will still keep local copy)', e);
+    markSynced(false);
+  }
+  try{
+    await storageSet(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.error('local cache save failed', e);
+  }
+}
+
+// poll for changes made on other devices (e.g. manager's phone) every few seconds
+function startSync(){
+  setInterval(async ()=>{
+    const active = document.activeElement;
+    const isEditing = active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName);
+    if(isEditing) return; // don't yank the screen while someone's typing
+    if(typeof lxSaveTimer !== 'undefined' && lxSaveTimer) return; // a debounced save is still pending
+    try{
+      const remote = await firebaseGet();
+      markSynced(true);
+      if(remote && remote.lastUpdated && (!state.lastUpdated || remote.lastUpdated > state.lastUpdated)){
+        state = remote;
+        normalizeState();
+        render();
+      }
+    }catch(e){ markSynced(false); /* offline or unreachable, just skip this tick */ }
+  }, 5000);
+}
+
+// ---- rendering ----
+function render(){
+  renderHeader();
+  if(currentTab==='attendance') renderAttendance();
+  else if(currentTab==='salary') renderSalary();
+  else if(currentTab==='summary') renderSummary();
+  else if(currentTab==='laxman') renderLaxman();
+  else if(currentTab==='history') renderHistory();
+  else if(currentTab==='warnings') renderWarnings();
+  else if(currentTab==='workers') renderWorkers();
+}
+
+function renderHeader(){
+  const parts = currentPeriodParts();
+  document.getElementById('periodLabel').textContent = periodTopLabel(parts);
+  document.getElementById('periodRange').textContent = periodBottomLabel(parts);
+
+  const showDots = currentTab==='attendance';
+  document.getElementById('dayDots').style.display = showDots ? 'flex':'none';
+  document.getElementById('periodStripAttendance').style.display =
+    (currentTab==='attendance'||currentTab==='salary'||currentTab==='warnings'||currentTab==='laxman') ? 'flex':'none';
+
+  if(showDots){
+    const dots = periodDates(parts);
+    const today = todayStr();
+    document.getElementById('dayDots').innerHTML = dots.map(d=>{
+      const dow = new Date(d+'T00:00:00').getDay();
+      const isToday = d===today;
+      const isSel = d===selectedDate;
+      return `<div class="daydot ${isToday?'today':''} ${isSel?'selected':''}" data-date="${d}">
+        <div class="dow">${TE_DOW[dow]}</div>
+        <div class="num">${new Date(d+'T00:00:00').getDate()}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('dayDots').querySelectorAll('.daydot').forEach(el=>{
+      el.addEventListener('click', ()=>{ selectedDate = el.dataset.date; render(); });
+    });
+  }
+}
+
+function statusFor(workerId, date){
+  return (state.attendance[workerId] && state.attendance[workerId][date]) || null;
+}
+function setStatus(workerId, date, status){
+  if(!state.attendance[workerId]) state.attendance[workerId] = {};
+  if(state.attendance[workerId][date] === status){
+    delete state.attendance[workerId][date]; // tap again to clear
+  } else {
+    state.attendance[workerId][date] = status;
+  }
+  saveState();
+  render();
+}
+
+function renderAttendance(){
+  const main = document.getElementById('mainArea');
+  const dateLabel = fmtShort(selectedDate) + (selectedDate===todayStr() ? ' · ఈరోజు':'');
+  main.innerHTML = `
+    <div class="section-title">${dateLabel} హాజరు గుర్తించండి</div>
+    <div class="card">
+      ${state.workers.map(w=>{
+        const st = statusFor(w.id, selectedDate);
+        return `<div class="worker-row">
+          <div class="avatar">${w.name.charAt(0)}</div>
+          <div class="wname">${w.te}<span class="en">${w.name}${w.role?' · '+w.role:''}</span></div>
+          <div class="status-btns">
+            <button class="sbtn p ${st==='P'?'active':''}" data-w="${w.id}" data-s="P">P</button>
+            <button class="sbtn h ${st==='H'?'active':''}" data-w="${w.id}" data-s="H">½</button>
+            <button class="sbtn a ${st==='A'?'active':''}" data-w="${w.id}" data-s="A">A</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="empty">P = హాజరు (Present) · ½ = అర్ధ రోజు (Half day) · A = గైర్హాజరు (Absent)<br>మళ్ళీ నొక్కితే తీసివేయబడుతుంది (tap again to clear)</div>
+  `;
+  main.querySelectorAll('.sbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=> setStatus(btn.dataset.w, selectedDate, btn.dataset.s));
+  });
+}
+
+function periodStats(workerId, parts){
+  const dates = periodDates(parts);
+  let present=0, half=0, absent=0;
+  dates.forEach(d=>{
+    const s = statusFor(workerId, d);
+    if(s==='P') present++;
+    else if(s==='H') half++;
+    else if(s==='A') absent++;
+  });
+  return {present, half, absent, marked: present+half+absent};
+}
+function advancesInPeriod(workerId, parts){
+  const b = periodBounds(parts);
+  return state.advances.filter(a=> a.workerId===workerId && a.date>=b.start && a.date<=b.end);
+}
+function outstandingBalance(workerId){
+  return state.advances
+    .filter(a=> a.workerId===workerId)
+    .reduce((sum,a)=> sum + (a.type==='repaid' ? -Number(a.amount) : Number(a.amount)), 0);
+}
+// ---- discipline warnings (dress code / gloves etc.) ----
+function warningsInPeriod(workerId, parts){
+  const b = periodBounds(parts);
+  return (state.warnings||[]).filter(x=> x.workerId===workerId && x.date>=b.start && x.date<=b.end);
+}
+function combinedMonthWarnings(workerId, parts){
+  const mm = pad(parts.m);
+  const lastDay = new Date(parts.y, parts.m, 0).getDate();
+  const start = parts.y+'-'+mm+'-01';
+  const end = parts.y+'-'+mm+'-'+pad(lastDay);
+  return (state.warnings||[]).filter(x=> x.workerId===workerId && x.date>=start && x.date<=end);
+}
+function warningsForScope(w, parts){
+  return w.payFreq==='monthly' ? combinedMonthWarnings(w.id, parts) : warningsInPeriod(w.id, parts);
+}
+const REASON_LABELS = {
+  dress:  'డ్రెస్ కోడ్ (Dress code)',
+  gloves: 'గ్లౌజ్ లేవు (No gloves)',
+  other:  'ఇతర (Other)'
+};
+// dates in this card's scope where the worker was Absent (A) or Half-day (H)
+function absencesForScope(w, parts){
+  const dates = (w.payFreq==='monthly')
+    ? monthHalves(parts).reduce((acc,p)=> acc.concat(periodDates(p)), [])
+    : periodDates(parts);
+  const abs=[], half=[];
+  dates.forEach(d=>{ const s=statusFor(w.id,d); if(s==='A') abs.push(d); else if(s==='H') half.push(d); });
+  return {abs, half};
+}
+
+function renderSalary(){
+  const main = document.getElementById('mainArea');
+  const parts = currentPeriodParts();
+  main.innerHTML = `<div class="section-title">వర్కర్ల వారీగా జీతం</div>` +
+    state.workers.map(w=>{
+      const {isMonthly, stats, missedDays, dim, daysThisPeriod, dailyRate, fullPeriodAmount, monthTotal, deduction, penaltyRate, warnDeductDays, warningDeduction, earned} = computeEarned(w, parts);
+      const {advs, recovered, givenNow, owedBefore, owedAfter, tip, net} = salaryNet(w, parts);
+      const outstanding = owedAfter;
+      const paid = getPayment(w, parts);
+      const missedLabel = (Number.isInteger(missedDays) ? missedDays : missedDays.toFixed(1));
+      const freqPill = isMonthly
+        ? '<span class="pill half">నెలవారీ (monthly)</span>'
+        : '<span class="pill present">బైవీక్లీ (biweekly)</span>';
+      const absInfo = absencesForScope(w, parts);
+      const absBlock = (absInfo.abs.length || absInfo.half.length) ? `
+          <div class="absdates">
+            ${absInfo.abs.length ? `<div><b>గైర్హాజరు తేదీలు (${absInfo.abs.length}):</b> ${absInfo.abs.map(fmtShort).join(', ')}</div>` : ''}
+            ${absInfo.half.length ? `<div><b>హాఫ్ డే (${absInfo.half.length}):</b> ${absInfo.half.map(fmtShort).join(', ')}</div>` : ''}
+          </div>` : '';
+      const warnRow = warnDeductDays>0
+        ? `<div class="row warn"><span>క్రమశిక్షణ కోత · Dress/gloves (${warnDeductDays} రోజు × ${fmtRupee(penaltyRate)})</span><span>-${fmtRupee(warningDeduction)}</span></div>`
+        : '';
+      // Advances are shown as two separate lines so it's always obvious which one
+      // moves the salary: money GIVEN only raises what he owes, money TAKEN BACK
+      // comes off this period's pay.
+      const givenRow = givenNow>0
+        ? `<div class="row"><span>ఈ పీరియడ్‌లో అడ్వాన్స్ ఇచ్చారు (given — జీతం నుండి తీయలేదు)</span><span>${fmtRupee(givenNow)}</span></div>`
+        : '';
+      const advRows = givenRow +
+        `<div class="row${recovered>0?' warn':''}"><span>అడ్వాన్స్ వసూలు (taken from salary)</span><span>-${fmtRupee(recovered)}</span></div>` +
+        `<div class="row tip-row"><span>\ud83d\udcb0 టిప్ (Tip \u2014 జీతానికి కలుస్తుంది)</span>
+           <span class="tipwrap">+<input type="number" inputmode="numeric" pattern="[0-9]*" class="tipField" data-w="${w.id}" value="${tip||''}" placeholder="0"></span></div>`;
+      return `<div class="card salary-card${paid?' is-paid':''}">
+        <div class="top">
+          <div class="avatar">${w.name.charAt(0)}</div>
+          <div class="wname">${w.te}<span class="en">${w.name}${w.role?' · '+w.role:''}</span>${paid?'<span class="pill paid">చెల్లించారు ✓</span>':''}</div>
+          <div class="rate-input">
+            <label>${isMonthly ? 'నెలవారీ జీతం' : 'రోజు జీతం'}</label>
+            <input type="number" inputmode="numeric" value="${isMonthly ? (w.monthly||0) : (w.dayRate||0)}" data-w="${w.id}" class="rateField">
+          </div>
+        </div>
+        <div class="breakdown">
+          ${isMonthly ? `
+          <div class="row"><span>${freqPill} · ఫిక్స్‌డ్ జీతం (నెల ${dim} రోజులైనా మారదు)</span><span></span></div>
+          <div class="row"><span>1 రోజు గైర్హాజరు = <b>${fmtRupee(dailyRate)}</b> కోత (ఫిక్స్‌డ్)</span><span></span></div>
+          <div class="row"><span>హాజరు <span class="pill present">${stats.present}P</span><span class="pill half">${stats.half}½</span><span class="pill absent">${stats.absent}A</span></span><span></span></div>
+          ${absBlock}
+          <div class="row"><span>పూర్తి నెల జీతం (ఫిక్స్‌డ్)</span><span>+${fmtRupee(fullPeriodAmount)}</span></div>
+          <div class="row"><span>గైర్హాజరు మినహాయింపు (${missedLabel} రోజులు × ${fmtRupee(dailyRate)})</span><span>-${fmtRupee(deduction)}</span></div>
+          ${warnRow}
+          ${advRows}
+          <div class="row net"><span>చెల్లించవలసినది</span><span class="amt">${fmtRupee(net)}</span></div>
+          ` : `
+          <div class="row"><span>${freqPill} (ఈ పీరియడ్)</span><span>${fmtRupee(dailyRate)}/day</span></div>
+          <div class="row"><span>ఈ నెల ${dim} రోజులు · ${fmtRupee(dailyRate)} × ${dim} = ${fmtRupee(monthTotal)} (పూర్తి నెల)</span><span></span></div>
+          <div class="row"><span>హాజరు <span class="pill present">${stats.present}P</span><span class="pill half">${stats.half}½</span><span class="pill absent">${stats.absent}A</span></span><span></span></div>
+          ${absBlock}
+          <div class="row"><span>పూర్తి జీతం (ఈ పీరియడ్ · ${daysThisPeriod} రోజులు)</span><span>+${fmtRupee(fullPeriodAmount)}</span></div>
+          <div class="row"><span>గైర్హాజరు మినహాయింపు (${missedLabel} రోజులు × ${fmtRupee(dailyRate)})</span><span>-${fmtRupee(deduction)}</span></div>
+          ${warnRow}
+          ${advRows}
+          <div class="row net"><span>చెల్లించవలసినది</span><span class="amt">${fmtRupee(net)}</span></div>
+          `}
+        </div>
+        ${(outstanding>0 || recovered>0) ? `<div class="outstanding-note">బకాయి అడ్వాన్స్ (Outstanding advance): <b>${fmtRupee(outstanding)}</b>${recovered>0 ? ` <span class="adj">— ఈ జీతం నుండి ${fmtRupee(recovered)} తీసివేశారు (${fmtRupee(owedBefore)} → ${fmtRupee(owedAfter)})</span>` : ''}</div>` : ''}
+        ${paid ? `
+        <div class="paid-banner">
+          <span>✓ <b>చెల్లించారు</b> ${fmtRupee(paid.amount)} · ${fmtShort(paid.date)}${paid.note?' · '+paid.note:''}</span>
+          <button class="undo" data-w="${w.id}" data-act="unpay">తీసివేయి (undo)</button>
+        </div>` : `
+        <button class="pay-btn" data-w="${w.id}" data-net="${Math.round(net)}">✓ జీతం చెల్లించారు (Mark salary paid)</button>`}
+        <button class="add-advance-btn" data-w="${w.id}" data-type="given">+ అడ్వాన్స్ జోడించండి (Add advance)</button>
+        <button class="add-advance-btn deduct-btn" data-w="${w.id}" data-type="repaid">\u2212 జీతం నుండి అడ్వాన్స్ తీసివేయండి (Deduct advance from salary)</button>
+      </div>`;
+    }).join('');
+
+  main.querySelectorAll('.rateField').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const w = state.workers.find(x=>x.id===inp.dataset.w);
+      if(w.payFreq==='monthly') w.monthly = Number(inp.value)||0;
+      else w.dayRate = Number(inp.value)||0;
+      saveState();
+      render();
+    });
+  });
+  main.querySelectorAll('.tipField').forEach(inp=>{
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('change', ()=>{
+      const w = state.workers.find(x=>x.id===inp.dataset.w);
+      setTip(w, parts, inp.value);
+      saveState();
+      render();
+    });
+  });
+  main.querySelectorAll('.pay-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> openPaySalaryModal(btn.dataset.w, Number(btn.dataset.net)));
+  });
+  main.querySelectorAll('.undo[data-act="unpay"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const w = state.workers.find(x=>x.id===btn.dataset.w);
+      if(confirm('చెల్లింపు గుర్తును తీసివేయాలా?\nUndo this salary payment record?')){
+        clearPayment(w, currentPeriodParts());
+        saveState();
+        render();
+      }
+    });
+  });
+  main.querySelectorAll('.add-advance-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> openAdvanceModal(btn.dataset.w, btn.dataset.type, parts));
+  });
+}
+
+function renderSummary(){
+  const main = document.getElementById('mainArea');
+  const parts = currentPeriodParts();
+  let totalNet=0, totalAdv=0, totalPresent=0, paidTotal=0, pendingTotal=0, paidCount=0;
+  state.workers.forEach(w=>{
+    const {isMonthly, stats, earned} = computeEarned(w, parts);
+    const {recovered, net} = salaryNet(w, parts);
+    const advTotal = recovered;
+    totalNet += net;
+    totalAdv += advTotal;
+    totalPresent += stats.present;
+    const p = getPayment(w, parts);
+    if(p){ paidTotal += Number(p.amount)||0; paidCount++; }
+    else { pendingTotal += net; }
+  });
+  const payStatus = state.workers.map(w=>({w, p:getPayment(w, parts)}));
+  const paySection = `
+    <div class="section-title">జీతం చెల్లింపు స్థితి (Payment status)</div>
+    <div class="card">
+      ${payStatus.map(({w,p})=>`
+        <div class="owe-item">
+          <div class="avatar">${w.name.charAt(0)}</div>
+          <div class="meta"><div class="wname">${w.te}<span class="en">${w.name}${p?' · '+fmtShort(p.date)+(p.note?' · '+p.note:''):' · ఇంకా చెల్లించలేదు (not paid yet)'}</span></div></div>
+          <div class="bal" style="color:${p?'var(--present)':'var(--absent)'}">${p?'✓ '+fmtRupee(p.amount):'—'}</div>
+        </div>`).join('')}
+      <div class="owe-total"><span>చెల్లించినది (${paidCount}/${state.workers.length})</span><span>${fmtRupee(paidTotal)}</span></div>
+      <div class="owe-total"><span>ఇంకా చెల్లించవలసినది (pending)</span><span>${fmtRupee(pendingTotal)}</span></div>
+    </div>`;
+
+  const allAdvances = [...state.advances].sort((a,b)=> b.date.localeCompare(a.date));
+
+  // outstanding = all-time given minus repaid, per worker (matches the salary card figure)
+  const owed = state.workers.map(w=>{
+    const list = state.advances.filter(a=> a.workerId===w.id);
+    const given  = list.filter(a=>a.type!=='repaid').reduce((s,a)=>s+Number(a.amount),0);
+    const repaid = list.filter(a=>a.type==='repaid').reduce((s,a)=>s+Number(a.amount),0);
+    return {w, given, repaid, bal: given-repaid};
+  }).filter(o=> Math.round(o.bal)!==0).sort((a,b)=> b.bal-a.bal);
+  const owedTotal = owed.reduce((s,o)=>s+o.bal,0);
+  const owedSection = `
+    <div class="section-title">బకాయి అడ్వాన్స్ (Outstanding by worker)</div>
+    <div class="card">
+      ${owed.length===0 ? '<div class="empty">బకాయిలు లేవు (nothing outstanding)</div>' :
+        owed.map(o=>`
+        <div class="owe-item">
+          <div class="avatar">${o.w.name.charAt(0)}</div>
+          <div class="meta"><div class="wname">${o.w.te}<span class="en">${o.w.name} · ఇచ్చారు ${fmtRupee(o.given)} \u2212 తిరిగి ${fmtRupee(o.repaid)}</span></div></div>
+          <div class="bal" style="color:${o.bal>=0?'var(--absent)':'var(--present)'}">${fmtRupee(o.bal)}</div>
+        </div>`).join('') +
+        `<div class="owe-total"><span>మొత్తం బకాయి (Total)</span><span>${fmtRupee(owedTotal)}</span></div>`
+      }
+    </div>`;
+
+  main.innerHTML = `
+    <div class="summary-total">
+      <div class="label">${periodTopLabel(parts)} \u00b7 ${periodBottomLabel(parts)}</div>
+      <div class="val">${fmtRupee(totalNet)}</div>
+      <div class="sub-row">
+        <div>ఇంకా చెల్లించవలసినది<span>${fmtRupee(pendingTotal)}</span></div>
+        <div>ఈ పీరియడ్ కోత<span>${fmtRupee(totalAdv)}</span></div>
+        <div>హాజరు రోజులు<span>${totalPresent}</span></div>
+      </div>
+    </div>
+    ${paySection}
+    ${owedSection}
+    <div class="section-title">అడ్వాన్స్ చరిత్ర (Advance history)</div>
+    <div class="card">
+      ${allAdvances.length===0 ? '<div class="empty">ఇంకా అడ్వాన్స్ లు లేవు</div>' :
+        allAdvances.map(a=>{
+          const w = state.workers.find(x=>x.id===a.workerId);
+          const isRepaid = a.type==='repaid';
+          return `<div class="adv-item">
+            <div class="avatar">${w?w.name.charAt(0):'?'}</div>
+            <div class="meta">
+              <div class="wname">${w?w.te:a.workerId}<span class="en">${fmtShort(a.date)} · ${isRepaid?'తిరిగి తీసుకున్నారు':'ఇచ్చారు'}${a.note?' · '+a.note:''}</span></div>
+            </div>
+            <div class="amt" style="${isRepaid?'color:var(--present);':''}">${isRepaid?'+':'-'}${fmtRupee(a.amount)}</div>
+            <button class="del" data-id="${a.id}">✕</button>
+          </div>`;
+        }).join('')
+      }
+    </div>
+  `;
+  main.querySelectorAll('.del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.advances = state.advances.filter(a=>a.id!==btn.dataset.id);
+      saveState();
+      render();
+    });
+  });
+}
+
+// Laxman's tab recalculates in place: rebuilding the whole tab on every keystroke
+// destroyed the field being typed into, so nothing could be entered on iPhone.
+// Inputs write straight to state, refresh only the figures, and save on a debounce.
+let lxSaveTimer = null;
+function lxQueueSave(){
+  if(lxSaveTimer) clearTimeout(lxSaveTimer);
+  lxSaveTimer = setTimeout(()=>{ lxSaveTimer = null; saveState(); }, 1200);
+}
+function lxNum(v){ const n = Number(v); return (!v && v!==0) || isNaN(n) || n<0 ? 0 : n; }
+function lxVal(n){ return n ? String(n) : ''; }
+
+function renderLaxman(){
+  const main = document.getElementById('mainArea');
+  const parts = currentPeriodParts();
+  const p = lxPeriod(parts);
+  const m = lxMonth(parts);
+  const periodLabel = periodTopLabel(parts)+' '+periodBottomLabel(parts);
+  const monthLabel = periodBottomLabel(parts);
+  const lastDay = daysInMonth(parts);
+
+  main.innerHTML = `
+    <div class="lx-note">
+      <b>లక్ష్మణ్ కంటైనర్ లెక్క.</b> రెండు వేరు వేరు లెక్కలు:<br>
+      🫓 రొట్టె/నాన్ → <b>ప్రతి 15 రోజులకు</b> (బైవీక్లీ) · మనం లక్ష్మణ్‌కు ఇవ్వాలి<br>
+      🧴 క్లీనింగ్, వాచ్‌మన్, ఛార్జ్ → <b>నెలవారీ</b> · లక్ష్మణ్ మనకు ఇవ్వాలి
+    </div>
+
+    <div class="card">
+      <div class="lx-cardhead">
+        <h3>🫓 రొట్టె & నాన్</h3><span class="tag biweekly">బైవీక్లీ · ${periodLabel}</span>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">రొట్టె సంఖ్య<span>Roti — total quantity sold</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxP" data-f="roti" value="${lxVal(p.roti)}" placeholder="0">
+      </div>
+      <div class="lx-row">
+        <div class="lbl">రొట్టె ధర<span>Price per roti</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxP" data-f="rotiPrice" value="${lxVal(p.rotiPrice)}" placeholder="30">
+        <div class="unit">₹ ఒకటి</div>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">నాన్ సంఖ్య<span>Naan — total quantity sold</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxP" data-f="naan" value="${lxVal(p.naan)}" placeholder="0">
+      </div>
+      <div class="lx-row">
+        <div class="lbl">నాన్ ధర<span>Price per naan</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxP" data-f="naanPrice" value="${lxVal(p.naanPrice)}" placeholder="40">
+        <div class="unit">₹ ఒకటి</div>
+      </div>
+      <div class="lx-sub">
+        రొట్టె: <b id="lxRotiLine">–</b><br>
+        నాన్: <b id="lxNaanLine">–</b><br>
+        మొత్తం అమ్మకం (total sale): <b id="lxSale">–</b> → సగం సగం
+      </div>
+      <div class="lx-tot"><span>మన వాటా (we keep)</span><span class="lx" id="lxOurShare">–</span></div>
+      <div class="lx-tot"><span>లక్ష్మణ్‌కు ఇవ్వాలి (his half)</span><span class="lx" id="lxHisHalf">–</span></div>
+    </div>
+
+    <div class="settle">
+      <div class="label">ఈ 15 రోజుల రొట్టె సగం · ${periodLabel}</div>
+      <div class="val" id="lxNetPeriod">–</div>
+      <div class="split">
+        <div>రొట్టె సగం (roti half)<span id="lxRotiHalf">–</span></div>
+        <div style="text-align:right">నాన్ సగం (naan half)<span id="lxNaanHalf">–</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="lx-cardhead">
+        <h3>🧴 క్లీనింగ్ సామాను</h3><span class="tag monthly">నెలవారీ · ${monthLabel}</span>
+      </div>
+      ${LX_ITEMS.map(it=>`
+        <div class="lx-row">
+          <div class="lbl">${it.te}<span>${it.en}</span></div>
+          <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxI" data-i="${it.id}" value="${lxVal(m.items[it.id])}" placeholder="0">
+          <div class="unit">₹</div>
+        </div>`).join('')}
+      <div class="lx-sub">మొత్తం బిల్లు (total): <b id="lxItemsTotal">–</b> → సగం లక్ష్మణ్ నుండి</div>
+      <div class="lx-tot"><span>లక్ష్మణ్ ఇవ్వాలి (Laxman owes)</span><span class="lx" id="lxItemsHalf">–</span></div>
+    </div>
+
+    <div class="card">
+      <div class="lx-cardhead">
+        <h3>💂 వాచ్‌మన్ జీతం</h3><span class="tag monthly">నెలవారీ · ${monthLabel}</span>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">వాచ్‌మన్ పూర్తి జీతం<span>Watchman's full monthly salary</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxM" data-f="watchman" value="${lxVal(m.watchman)}" placeholder="12000">
+        <div class="unit">₹</div>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">లక్ష్మణ్ వాటా (ఫిక్స్‌డ్)<span>Laxman's fixed share of it</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxM" data-f="watchmanShare" value="${lxVal(m.watchmanShare)}" placeholder="5000">
+        <div class="unit">₹</div>
+      </div>
+      <div class="lx-tot"><span>లక్ష్మణ్ ఇవ్వాలి (fixed)</span><span class="lx" id="lxWatchHalf">–</span></div>
+    </div>
+
+    <div class="card">
+      <div class="lx-cardhead">
+        <h3>🧹 క్లీనింగ్ ఛార్జ్</h3><span class="tag monthly">నెలవారీ · ${monthLabel}</span>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">నెలవారీ క్లీనింగ్ ఛార్జ్<span>Flat monthly charge from Laxman</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxM" data-f="fee" value="${lxVal(m.fee)}" placeholder="1000">
+        <div class="unit">₹</div>
+      </div>
+      <div class="lx-tot"><span>లక్ష్మణ్ ఇవ్వాలి (Laxman owes)</span><span class="lx" id="lxFeeOut">–</span></div>
+    </div>
+
+    <div class="settle" style="margin-bottom:10px">
+      <div class="label">లక్ష్మణ్ ఇవ్వాలి · ${monthLabel}</div>
+      <div class="val" id="lxNetMonth">–</div>
+      <div class="split">
+        <div>క్లీనింగ్ సగం<span id="lxS1">–</span></div>
+        <div style="text-align:center">వాచ్‌మన్<span id="lxS2">–</span></div>
+        <div style="text-align:right">ఛార్జ్<span id="lxS3">–</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="lx-cardhead">
+        <h3>🧾 మొత్తం లెక్క</h3><span class="tag monthly">ఒకే చెల్లింపు · ${monthLabel}</span>
+      </div>
+      <div class="lx-sub">
+        రొట్టె/నాన్ 1–15: <b id="lxH1">–</b><br>
+        రొట్టె/నాన్ 16–${lastDay}: <b id="lxH2">–</b>
+      </div>
+      <div class="lx-tot"><span>మనం ఇవ్వాలి (రొట్టె/నాన్ · పూర్తి నెల)</span><span class="lx" id="lxTotOwe">–</span></div>
+      <div class="lx-tot"><span>లక్ష్మణ్ ఇవ్వాలి (క్లీనింగ్+వాచ్‌మన్+ఛార్జ్)</span><span class="lx" id="lxTotHis">–</span></div>
+      <div class="lx-tot lx-net"><span>నికర · ఇవ్వాల్సినది (net after deducting)</span><span class="lx" id="lxNetAll">–</span></div>
+      <div class="lx-row" style="margin-top:8px">
+        <div class="lbl">మనం ఇచ్చిన డబ్బు<span>Cash we have given Laxman</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxM" data-f="given" value="${lxVal(m.given)}" placeholder="0">
+        <div class="unit">₹</div>
+      </div>
+      <div class="lx-row">
+        <div class="lbl">లక్ష్మణ్ ఇచ్చిన డబ్బు<span>Cash Laxman has given us (extra)</span></div>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" class="lxM" data-f="received" value="${lxVal(m.received)}" placeholder="0">
+        <div class="unit">₹</div>
+      </div>
+    </div>
+
+    <div class="settle">
+      <div class="label">మిగిలిన బ్యాలెన్స్ · ${monthLabel}</div>
+      <div class="val" id="lxFinal">–</div>
+      <div class="split">
+        <div>మనం ఇవ్వాలి<span id="lxSA">–</span></div>
+        <div style="text-align:center">లక్ష్మణ్ ఇవ్వాలి<span id="lxSB">–</span></div>
+        <div style="text-align:right">ఇచ్చినది<span id="lxSC">–</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:-4px">
+      ${m.settled ? `
+      <div class="paid-banner" style="margin-top:0">
+        <span>✓ <b>${m.settled.dir==='in' ? 'తీసుకున్నాము' : 'ఇచ్చాము'}</b> ${fmtRupee(m.settled.amount)} · ${fmtShort(m.settled.date)}${m.settled.note?' · '+m.settled.note:''}</span>
+        <button class="undo" id="lxUnpayAll">తీసివేయి (undo)</button>
+      </div>` : `
+      <button class="pay-btn" style="margin-top:0" id="lxPayAll">✓ చెల్లింపు పూర్తి (Mark settled)</button>`}
+    </div>
+    <div class="empty">వేరే పీరియడ్ చూడటానికి పైన ‹ › నొక్కండి<br>(‹ › switches the roti/naan period · the settlement below is for the whole month)</div>
+  `;
+
+  // recompute every figure from state without touching the inputs themselves
+  function lxRefresh(){
+    const b = lxBreadCalc(parts);
+    const mc = lxMonthCalc(parts);
+    const set = (id, txt)=>{ const el = main.querySelector('#'+id); if(el) el.textContent = txt; };
+    set('lxRotiLine', (b.p.roti||0)+' × '+fmtRupee(b.p.rotiPrice||0)+' = '+fmtRupee(b.rotiSale));
+    set('lxNaanLine', (b.p.naan||0)+' × '+fmtRupee(b.p.naanPrice||0)+' = '+fmtRupee(b.naanSale));
+    set('lxSale', fmtRupee(b.sale));
+    set('lxOurShare', fmtRupee(b.ourShare));
+    set('lxHisHalf', fmtRupee(b.weOwe));
+    set('lxRotiHalf', fmtRupee(b.rotiSale/2));
+    set('lxNaanHalf', fmtRupee(b.naanSale/2));
+    set('lxItemsTotal', fmtRupee(mc.itemsTotal));
+    set('lxItemsHalf', fmtRupee(mc.itemsHalf));
+    set('lxWatchHalf', fmtRupee(mc.watchmanOwed));
+    set('lxFeeOut', fmtRupee(mc.fee));
+    set('lxS1', fmtRupee(mc.itemsHalf));
+    set('lxS2', fmtRupee(mc.watchmanOwed));
+    set('lxS3', fmtRupee(mc.fee));
+    const pe = main.querySelector('#lxNetPeriod');
+    if(pe) pe.innerHTML = `${fmtRupee(b.weOwe)}<small>ఈ పీరియడ్ రొట్టె/నాన్ సగం · we owe Laxman</small>`;
+    const me = main.querySelector('#lxNetMonth');
+    if(me) me.innerHTML = `${fmtRupee(mc.lxOwes)}<small>క్లీనింగ్ + వాచ్‌మన్ + ఛార్జ్ · Laxman owes us</small>`;
+
+    // ---- the one settlement for the whole tab ----
+    const st = lxSettlement(parts);
+    set('lxH1', fmtRupee(st.h1.weOwe));
+    set('lxH2', fmtRupee(st.h2.weOwe));
+    set('lxTotOwe', fmtRupee(st.weOwe));
+    set('lxTotHis', '-'+fmtRupee(st.lxOwes));
+    set('lxNetAll', fmtRupee(st.net));
+    set('lxSA', fmtRupee(st.weOwe));
+    set('lxSB', fmtRupee(st.lxOwes));
+    set('lxSC', fmtRupee(st.given));
+    const fe = main.querySelector('#lxFinal');
+    if(fe) fe.innerHTML = `${fmtRupee(Math.abs(st.balance))}<small>${st.balance>=0
+      ? 'ఇంకా మనం ఇవ్వాలి · we still owe Laxman'
+      : 'ఇంకా లక్ష్మణ్ ఇవ్వాలి · Laxman still owes us'}</small>`;
+    const ba = main.querySelector('#lxPayAll'); if(ba) ba.dataset.net = Math.round(Math.abs(st.balance));
+  }
+  lxRefresh();
+
+  // 'input' fires on every keystroke so the totals move as you type, and because the
+  // DOM is never rebuilt the keyboard and cursor stay put.
+  main.querySelectorAll('.lxP').forEach(inp=>{
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('input', ()=>{
+      lxPeriod(parts)[inp.dataset.f] = lxNum(inp.value);
+      lxRefresh(); lxQueueSave();
+    });
+  });
+  main.querySelectorAll('.lxI').forEach(inp=>{
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('input', ()=>{
+      lxMonth(parts).items[inp.dataset.i] = lxNum(inp.value);
+      lxRefresh(); lxQueueSave();
+    });
+  });
+  main.querySelectorAll('.lxM').forEach(inp=>{
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('input', ()=>{
+      lxMonth(parts)[inp.dataset.f] = lxNum(inp.value);
+      lxRefresh(); lxQueueSave();
+    });
+  });
+
+  const payAll = main.querySelector('#lxPayAll');
+  if(payAll) payAll.addEventListener('click', ()=> openLxSettleModal(parts, Number(payAll.dataset.net)||0));
+  const unAll = main.querySelector('#lxUnpayAll');
+  if(unAll) unAll.addEventListener('click', ()=>{
+    if(confirm('\u0c08 \u0c17\u0c41\u0c30\u0c4d\u0c24\u0c41\u0c28\u0c41 \u0c24\u0c40\u0c38\u0c3f\u0c35\u0c47\u0c2f\u0c3e\u0c32\u0c3e?\nUndo this record?')){
+      const mm = lxMonth(parts);
+      if(mm.settled){
+        // roll the cash figure back so the balance returns to what it was
+        if(mm.settled.dir==='in') mm.received = lxNum((Number(mm.received)||0) - (Number(mm.settled.amount)||0));
+        else                      mm.given    = lxNum((Number(mm.given)||0)    - (Number(mm.settled.amount)||0));
+      }
+      mm.settled = null; saveState(); render();
+    }
+  });
+}
+
+// The whole Laxman tab settles in one go: bread we owe him, less the cleaning/watchman/
+// charge he owes us. Whoever is short pays the difference — this records that one payment.
+function openLxSettleModal(parts, suggested){
+  const st = lxSettlement(parts);
+  const weArePaying = st.balance >= 0;
+  const dir = weArePaying ? 'out' : 'in';
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>\ud83e\uddfe \u0c2e\u0c4a\u0c24\u0c4d\u0c24\u0c02 \u0c32\u0c46\u0c15\u0c4d\u0c15 \u00b7 ${periodBottomLabel(parts)}</h3>
+      <div class="wn-hint">
+        \u0c2e\u0c28\u0c02 \u0c07\u0c35\u0c4d\u0c35\u0c3e\u0c32\u0c3f (roti/naan): <b>${fmtRupee(st.weOwe)}</b><br>
+        \u0c32\u0c15\u0c4d\u0c37\u0c4d\u0c2e\u0c23\u0c4d \u0c07\u0c35\u0c4d\u0c35\u0c3e\u0c32\u0c3f (cleaning): <b>-${fmtRupee(st.lxOwes)}</b><br>
+        \u0c28\u0c3f\u0c15\u0c30 (net): <b>${fmtRupee(st.net)}</b> \u00b7 \u0c07\u0c2a\u0c4d\u0c2a\u0c1f\u0c3f\u0c15\u0c47 \u0c07\u0c1a\u0c4d\u0c1a\u0c3f\u0c28\u0c26\u0c3f: <b>${fmtRupee(st.given)}</b><br>
+        ${weArePaying
+          ? '\u2192 \u0c2e\u0c28\u0c02 \u0c32\u0c15\u0c4d\u0c37\u0c4d\u0c2e\u0c23\u0c4d\u200c\u0c15\u0c41 \u0c07\u0c35\u0c4d\u0c35\u0c3e\u0c32\u0c3f (we pay Laxman)'
+          : '\u2192 \u0c32\u0c15\u0c4d\u0c37\u0c4d\u0c2e\u0c23\u0c4d \u0c2e\u0c28\u0c15\u0c41 \u0c07\u0c35\u0c4d\u0c35\u0c3e\u0c32\u0c3f (Laxman pays us)'}
+      </div>
+      <div class="field"><label>\u0c24\u0c47\u0c26\u0c40 (Date)</label><input type="date" id="lxDate" value="${todayStr()}"></div>
+      <div class="field"><label>\u0c2e\u0c4a\u0c24\u0c4d\u0c24\u0c02 (Amount \u20b9)</label><input type="number" inputmode="numeric" id="lxAmt" value="${Math.abs(Math.round(st.balance))}"></div>
+      <div class="field"><label>\u0c28\u0c4b\u0c1f\u0c4d (Note, optional \u2014 cash / GPay)</label><input type="text" id="lxNote" placeholder=""></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="lxCancel">\u0c30\u0c26\u0c4d\u0c26\u0c41</button>
+        <button class="btn primary" id="lxSave">\u0c38\u0c47\u0c35\u0c4d</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('#lxCancel').addEventListener('click', ()=> bg.remove());
+  bg.addEventListener('click', (e)=>{ if(e.target===bg) bg.remove(); });
+  bg.querySelector('#lxSave').addEventListener('click', ()=>{
+    const rec = {
+      date: bg.querySelector('#lxDate').value || todayStr(),
+      amount: Number(bg.querySelector('#lxAmt').value)||0,
+      note: bg.querySelector('#lxNote').value.trim(),
+      dir,
+      at: Date.now()
+    };
+    // The button is a shortcut for the cash fields, so it adds into them and the
+    // balance below can never disagree with the record.
+    const mo = lxMonth(parts);
+    if(dir==='in') mo.received = lxNum((Number(mo.received)||0) + rec.amount);
+    else           mo.given    = lxNum((Number(mo.given)||0)    + rec.amount);
+    mo.settled = rec;
+    saveState();
+    bg.remove();
+    render();
+  });
+}
+
+// ---- History: every payment ever recorded, newest first ----
+// Reads the same records the Salary and Laxman tabs write — nothing is stored twice.
+let histFilter = 'all';
+
+function paymentHistory(){
+  const rows = [];
+  // 1. staff salary payments  {'workerId|2026-7-1': {...}}
+  Object.keys(state.payments||{}).forEach(k=>{
+    const rec = state.payments[k];
+    if(!rec || !rec.date) return;
+    const wid = k.split('|')[0];
+    const bits = (k.split('|')[1]||'').split('-');
+    const parts = {y:Number(bits[0]), m:Number(bits[1]), half: bits[2]==='M' ? 1 : Number(bits[2])};
+    const w = state.workers.find(x=>x.id===wid);
+    const scopeLabel = bits[2]==='M'
+      ? periodBottomLabel(parts)+' · పూర్తి నెల'
+      : periodTopLabel(parts)+' '+periodBottomLabel(parts);
+    rows.push({
+      group:'salary', key:k, date:rec.date, at:rec.at||0, amount:Number(rec.amount)||0,
+      note:rec.note||'', dir:'out',
+      title: w ? w.te : wid, sub: 'జీతం · '+scopeLabel, tag: w ? w.name : wid
+    });
+  });
+  // 2. bread money we handed Laxman  {'2026-7-1': {paid:{...}}}
+  Object.keys((state.laxman&&state.laxman.periods)||{}).forEach(k=>{
+    const rec = state.laxman.periods[k].paid;
+    if(!rec || !rec.date) return;
+    const bits = k.split('-');
+    const parts = {y:Number(bits[0]), m:Number(bits[1]), half:Number(bits[2])};
+    rows.push({
+      group:'laxman', key:'lxp|'+k, date:rec.date, at:rec.at||0, amount:Number(rec.amount)||0,
+      note:rec.note||'', dir:'out',
+      title:'లక్ష్మణ్ (కంటైనర్) 🫓', sub:'రొట్టె/నాన్ సగం · '+periodTopLabel(parts)+' '+periodBottomLabel(parts), tag:'Laxman'
+    });
+  });
+  // 3. the one monthly Laxman settlement  {'2026-7': {settled:{...}}}
+  //    (older per-side 'paid' records are still read below so past months stay visible)
+  Object.keys((state.laxman&&state.laxman.months)||{}).forEach(k=>{
+    const mo = state.laxman.months[k];
+    const bits = k.split('-');
+    const parts = {y:Number(bits[0]), m:Number(bits[1]), half:1};
+    const rec = mo.settled;
+    if(rec && rec.date){
+      rows.push({
+        group:'laxman', key:'lxs|'+k, date:rec.date, at:rec.at||0, amount:Number(rec.amount)||0,
+        note:rec.note||'', dir: rec.dir==='in' ? 'in' : 'out',
+        title:'లక్ష్మణ్ (కంటైనర్) 🧾',
+        sub:'మొత్తం లెక్క · '+periodBottomLabel(parts), tag:'Laxman'
+      });
+    }
+    const old = mo.paid;
+    if(old && old.date){
+      rows.push({
+        group:'laxman', key:'lxm|'+k, date:old.date, at:old.at||0, amount:Number(old.amount)||0,
+        note:old.note||'', dir:'in',
+        title:'లక్ష్మణ్ (కంటైనర్) 🧾', sub:'క్లీనింగ్ + వాచ్‌మన్ + ఛార్జ్ · '+periodBottomLabel(parts), tag:'Laxman'
+      });
+    }
+  });
+  rows.sort((a,b)=> a.date===b.date ? (b.at-a.at) : (a.date<b.date ? 1 : -1));
+  return rows;
+}
+
+function deleteHistoryRow(row){
+  if(row.key.startsWith('lxp|')) state.laxman.periods[row.key.slice(4)].paid = null;
+  else if(row.key.startsWith('lxm|')) state.laxman.months[row.key.slice(4)].paid = null;
+  else if(state.payments) delete state.payments[row.key];
+}
+
+function renderHistory(){
+  const main = document.getElementById('mainArea');
+  const all = paymentHistory();
+  const rows = all.filter(r=> histFilter==='all' || r.group===histFilter);
+  const out = rows.filter(r=>r.dir==='out').reduce((s,r)=>s+r.amount,0);
+  const inn = rows.filter(r=>r.dir==='in').reduce((s,r)=>s+r.amount,0);
+
+  // group by the MONTH THE MONEY MOVED, not the period it was for
+  const groups = [];
+  rows.forEach(r=>{
+    const p = partsFromDate(r.date);
+    const label = periodBottomLabel(p);
+    let g = groups.find(x=>x.label===label);
+    if(!g){ g = {label, items:[], out:0, in:0}; groups.push(g); }
+    g.items.push(r);
+    if(r.dir==='out') g.out += r.amount; else g.in += r.amount;
+  });
+
+  const chip = (id,label)=> `<button data-f="${id}" class="${histFilter===id?'on':''}">${label}</button>`;
+
+  main.innerHTML = `
+    <div class="hist-tot">
+      <div class="label">మొత్తం చెల్లించినది (paid out)</div>
+      <div class="val">${fmtRupee(out)}</div>
+      <div class="sub-row">
+        <div>వసూలు అయినది · received<span>${fmtRupee(inn)}</span></div>
+        <div style="text-align:right">రికార్డులు · records<span>${rows.length}</span></div>
+      </div>
+    </div>
+    <div class="hist-filter">
+      ${chip('all','అన్నీ (All)')}
+      ${chip('salary','జీతం (Salary)')}
+      ${chip('laxman','లక్ష్మణ్ లెక్క (Container)')}
+    </div>
+    ${rows.length===0 ? `<div class="empty">ఇంకా ఏ చెల్లింపూ నమోదు కాలేదు.<br>జీతం లేదా లక్ష్మణ్ ట్యాబ్‌లో “చెల్లించారు” నొక్కితే ఇక్కడ కనిపిస్తుంది.<br>(No payments recorded yet)</div>`
+    : groups.map(g=>`
+      <div class="hist-month">
+        <span>${g.label}</span>
+        <span class="cnt">${g.out?'−'+fmtRupee(g.out):''}${g.out&&g.in?' · ':''}${g.in?'+'+fmtRupee(g.in):''}</span>
+      </div>
+      <div class="card">
+        ${g.items.map(r=>{
+          const d = new Date(r.date+'T00:00:00');
+          const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+          return `<div class="hist-item">
+            <div class="datechip"><div class="d">${d.getDate()}</div><div class="mo">${mo}</div></div>
+            <div class="meta">
+              <div class="t">${r.title}</div>
+              <div class="s">${r.sub}</div>
+              ${r.note?`<div class="n">📝 ${r.note}</div>`:''}
+            </div>
+            <div class="amt ${r.dir}">${r.dir==='out'?'−':'+'}${fmtRupee(r.amount)}<small>${r.dir==='out'?'ఇచ్చాము':'తీసుకున్నాము'}</small></div>
+            <button class="del" data-k="${r.key}">✕</button>
+          </div>`;
+        }).join('')}
+      </div>`).join('')}
+    <div class="empty">ప్రతి చెల్లింపు తేదీతో సహా ఇక్కడ శాశ్వతంగా ఉంటుంది.<br>(Every payment, with its date, stays here permanently)</div>
+  `;
+
+  main.querySelectorAll('.hist-filter button').forEach(b=>{
+    b.addEventListener('click', ()=>{ histFilter = b.dataset.f; render(); });
+  });
+  main.querySelectorAll('.hist-item .del').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const row = all.find(r=>r.key===b.dataset.k);
+      if(!row) return;
+      if(confirm('ఈ చెల్లింపు రికార్డును తీసివేయాలా?\nDelete this payment record?\n\n'+row.title+' · '+fmtRupee(row.amount)+' · '+fmtShort(row.date))){
+        deleteHistoryRow(row); saveState(); render();
+      }
+    });
+  });
+}
+
+function renderWorkers(){
+  const main = document.getElementById('mainArea');
+  main.innerHTML = `
+    <div class="section-title">సిబ్బంది జాబితా (Workers)</div>
+    <div class="card">
+      ${state.workers.map(w=>`
+        <div class="worker-row">
+          <div class="avatar">${w.name.charAt(0)}</div>
+          <div class="wname" style="flex:1">${w.te}<span class="en">${w.name}${w.role?' · '+w.role:''}</span>
+            <span class="en">${w.payFreq==='monthly'
+              ? fmtRupee(w.monthly||0)+'/month fixed · paid monthly · absent day −'+fmtRupee(w.dayRate||0)
+              : fmtRupee(w.dayRate||0)+'/day · paid biweekly'}</span>
+          </div>
+          <div class="rate-input" style="margin-left:auto">
+            <label>రోజు జీతం</label>
+            <input type="number" inputmode="numeric" value="${w.dayRate||0}" data-w="${w.id}" class="wDayRate">
+          </div>
+          <button class="del" data-w="${w.id}" style="background:none;border:none;color:var(--ink-soft);font-size:16px;">✕</button>
+        </div>
+      `).join('')}
+    </div>
+    <button class="add-advance-btn" id="addWorkerBtn">+ కొత్త సిబ్బందిని జోడించండి (Add worker)</button>
+  `;
+  main.querySelectorAll('.wDayRate').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const w = state.workers.find(x=>x.id===inp.dataset.w);
+      w.dayRate = Number(inp.value)||0;
+      saveState();
+      render();
+    });
+  });
+  main.querySelectorAll('.del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(confirm('ఈ సిబ్బందిని తీసివేయాలా? Remove this worker?')){
+        state.workers = state.workers.filter(w=>w.id!==btn.dataset.w);
+        saveState();
+        render();
+      }
+    });
+  });
+  document.getElementById('addWorkerBtn').addEventListener('click', openAddWorkerModal);
+}
+
+// ---- modals ----
+// An advance/deduction is always entered from a salary card, so it must land in the
+// period that card is showing. Today's date is only a safe default if it actually
+// falls inside that period — on 17 Jul, viewing the 1–15 card, it does not.
+function periodDefaultDate(parts){
+  if(!parts) return selectedDate;
+  const b = periodBounds(parts);
+  return (selectedDate >= b.start && selectedDate <= b.end) ? selectedDate : b.end;
+}
+function openAdvanceModal(workerId, presetType, parts){
+  const w = state.workers.find(x=>x.id===workerId);
+  const type = presetType || 'given';
+  const defDate = periodDefaultDate(parts);
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>${type==='repaid' ? 'జీతం నుండి అడ్వాన్స్ తీసివేయండి' : 'అడ్వాన్స్ జోడించండి'} · ${w.te}</h3>
+      <div class="field"><label>రకం (Type)</label>
+        <select id="advType">
+          <option value="given" ${type==='given'?'selected':''}>అడ్వాన్స్ ఇచ్చారు (Advance given)</option>
+          <option value="repaid" ${type==='repaid'?'selected':''}>తిరిగి తీసుకున్నారు (Repaid / adjusted from salary)</option>
+        </select>
+      </div>
+      <div class="field"><label>మొత్తం (Amount ₹)</label><input type="number" inputmode="numeric" id="advAmt" placeholder="1000"></div>
+      <div class="field"><label>తేదీ (Date)</label><input type="date" id="advDate" value="${defDate}"></div>
+      <div class="period-hint" id="advPeriodHint"></div>
+      <div class="field"><label>నోట్ (Note, optional)</label><input type="text" id="advNote" placeholder=""></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="advCancel">రద్దు</button>
+        <button class="btn primary" id="advSave">సేవ్</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  // Live: tell her exactly which fortnight's salary this date will move.
+  const dateEl = bg.querySelector('#advDate');
+  const hintEl = bg.querySelector('#advPeriodHint');
+  function refreshHint(){
+    const d = dateEl.value;
+    if(!d){ hintEl.textContent=''; hintEl.className='period-hint'; return; }
+    const p = partsFromDate(d);
+    const label = periodTopLabel(p) + ' ' + periodBottomLabel(p);
+    const mismatch = parts && (p.y!==parts.y || p.m!==parts.m || p.half!==parts.half);
+    hintEl.className = 'period-hint' + (mismatch ? ' bad' : '');
+    hintEl.innerHTML = mismatch
+      ? `⚠️ ఈ తేదీ <b>${label}</b> పీరియడ్‌లోకి వెళ్తుంది — మీరు చూస్తున్న <b>${periodTopLabel(parts)} ${periodBottomLabel(parts)}</b> జీతం తగ్గదు.`
+      : `✓ ఈ మొత్తం <b>${label}</b> జీతం నుండి తీసివేయబడుతుంది.`;
+  }
+  dateEl.addEventListener('change', refreshHint);
+  dateEl.addEventListener('input', refreshHint);
+  refreshHint();
+  bg.querySelector('#advCancel').addEventListener('click', ()=> bg.remove());
+  bg.addEventListener('click', (e)=>{ if(e.target===bg) bg.remove(); });
+  bg.querySelector('#advSave').addEventListener('click', ()=>{
+    const amt = Number(bg.querySelector('#advAmt').value);
+    const date = bg.querySelector('#advDate').value || defDate;
+    const note = bg.querySelector('#advNote').value.trim();
+    const type = bg.querySelector('#advType').value;
+    if(!amt || amt<=0){ alert('సరైన మొత్తం నమోదు చేయండి'); return; }
+    state.advances.push({id:'a'+Date.now(), workerId, date, amount:amt, type, note});
+    saveState();
+    bg.remove();
+    render();
+  });
+}
+
+function renderWarnings(){
+  const main = document.getElementById('mainArea');
+  const parts = currentPeriodParts();
+  const perWorker = state.workers.map(w=>{
+    const list = warningsForScope(w, parts);
+    return {w, count:list.length, deducts:list.filter(x=>x.deduct).length};
+  });
+  const chips = perWorker.map(p=>`
+    <button class="wcount-chip" data-w="${p.w.id}">
+      <span class="avatar">${p.w.name.charAt(0)}</span>
+      <span>${p.w.te}</span>
+      <span class="n">${p.count}</span>
+      ${p.deducts?`<span class="pill absent">${p.deducts} కోత</span>`:''}
+    </button>`).join('');
+  const allWarnings = [...(state.warnings||[])].sort((a,b)=> b.date.localeCompare(a.date));
+  const log = allWarnings.length===0
+    ? '<div class="empty">ఇంకా హెచ్చరికలు లేవు</div>'
+    : allWarnings.map(x=>{
+        const w = state.workers.find(v=>v.id===x.workerId);
+        const lvlPill = x.deduct
+          ? '<span class="pill absent">రెండవ · కోత</span>'
+          : '<span class="pill half">మొదటి హెచ్చరిక</span>';
+        return `<div class="wlog-item">
+          <div class="avatar">${w?w.name.charAt(0):'?'}</div>
+          <div class="meta">
+            <div class="wname">${w?w.te:x.workerId} ${lvlPill}<span class="en">${fmtShort(x.date)} · ${REASON_LABELS[x.reason]||x.reason}${x.note?' · '+x.note:''}</span></div>
+          </div>
+          <button class="wlog-del" data-id="${x.id}" title="తొలగించు">\u2715</button>
+        </div>`;
+      }).join('');
+  main.innerHTML = `
+    <div class="wtab-intro">
+      <b>డ్రెస్ కోడ్ / గ్లౌజ్ హెచ్చరికలు.</b> మొదటిసారి \u2192 <b>హెచ్చరిక మాత్రమే</b> (కోత లేదు).
+      రెండవసారి \u2192 <b>ఆ రోజు జీతం కోత</b> (1 రోజు జీతం). త్రివేణి ఇక్కడ లాగ్ చేయవచ్చు.
+    </div>
+    <button class="add-advance-btn" id="addWarnBtn">+ కొత్త హెచ్చరిక (Add warning)</button>
+    <div class="section-title" style="margin-top:14px;">ఈ పీరియడ్ (${periodTopLabel(parts)} \u00b7 ${periodBottomLabel(parts)})</div>
+    <div class="wcount-grid">${chips}</div>
+    <div class="section-title">హెచ్చరికల చరిత్ర (Warning history)</div>
+    <div class="card">${log}</div>`;
+  main.querySelector('#addWarnBtn').addEventListener('click', ()=> openWarningModal());
+  main.querySelectorAll('.wcount-chip').forEach(btn=> btn.addEventListener('click', ()=> openWarningModal(btn.dataset.w)));
+  main.querySelectorAll('.wlog-del').forEach(btn=> btn.addEventListener('click', ()=>{
+    if(confirm('ఈ హెచ్చరికను తొలగించాలా?')){
+      state.warnings = (state.warnings||[]).filter(x=> x.id!==btn.dataset.id);
+      saveState(); render();
+    }
+  }));
+}
+
+function openWarningModal(presetWorkerId){
+  if(!state.workers.length){ alert('ముందుగా సిబ్బందిని జోడించండి'); return; }
+  const firstId = presetWorkerId || state.workers[0].id;
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  const workerOpts = state.workers.map(w=> `<option value="${w.id}" ${w.id===firstId?'selected':''}>${w.te} (${w.name})</option>`).join('');
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>హెచ్చరిక జోడించండి (Add warning)</h3>
+      <div class="field"><label>సిబ్బంది (Worker)</label>
+        <select id="wnWorker">${workerOpts}</select>
+      </div>
+      <div class="field"><label>కారణం (Reason)</label>
+        <select id="wnReason">
+          <option value="dress">డ్రెస్ కోడ్ లేదు (No dress code)</option>
+          <option value="gloves">గ్లౌజ్ లేవు (No gloves)</option>
+          <option value="other">ఇతర (Other)</option>
+        </select>
+      </div>
+      <div class="field"><label>తేదీ (Date)</label><input type="date" id="wnDate" value="${selectedDate}"></div>
+      <div class="field"><label>స్థాయి (Level)</label>
+        <select id="wnLevel">
+          <option value="1">మొదటి హెచ్చరిక \u2014 కోత లేదు (First \u2014 no deduction)</option>
+          <option value="2">రెండవ హెచ్చరిక \u2014 1 రోజు జీతం కోత (Second \u2014 deduct 1 day)</option>
+        </select>
+      </div>
+      <div class="wn-hint" id="wnHint"></div>
+      <div class="field"><label>నోట్ (Note, optional)</label><input type="text" id="wnNote" placeholder=""></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="wnCancel">రద్దు</button>
+        <button class="btn primary" id="wnSave">సేవ్</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  const refreshHint = ()=>{
+    const wid = bg.querySelector('#wnWorker').value;
+    const date = bg.querySelector('#wnDate').value || selectedDate;
+    const dp = partsFromDate(date);
+    const prior = warningsInPeriod(wid, dp).length;
+    bg.querySelector('#wnLevel').value = prior>=1 ? '2' : '1';
+    const w = state.workers.find(v=>v.id===wid);
+    const rate = w ? daySalary(w, dp) : 0;
+    bg.querySelector('#wnHint').innerHTML = prior>=1
+      ? `ఈ పీరియడ్ లో ఇప్పటికే <b>${prior}</b> హెచ్చరిక(లు) \u2192 ఇది రెండవది, <b>${fmtRupee(rate)}</b> (1 రోజు జీతం) కోత అవుతుంది.`
+      : `ఈ పీరియడ్ లో ఇది మొదటి హెచ్చరిక \u2192 కోత ఉండదు.`;
+  };
+  refreshHint();
+  bg.querySelector('#wnWorker').addEventListener('change', refreshHint);
+  bg.querySelector('#wnDate').addEventListener('change', refreshHint);
+  bg.querySelector('#wnCancel').addEventListener('click', ()=> bg.remove());
+  bg.addEventListener('click', (e)=>{ if(e.target===bg) bg.remove(); });
+  bg.querySelector('#wnSave').addEventListener('click', ()=>{
+    const workerId = bg.querySelector('#wnWorker').value;
+    const reason = bg.querySelector('#wnReason').value;
+    const date = bg.querySelector('#wnDate').value || selectedDate;
+    const level = Number(bg.querySelector('#wnLevel').value);
+    const note = bg.querySelector('#wnNote').value.trim();
+    state.warnings.push({id:'w'+Date.now(), workerId, date, reason, note, level, deduct: level===2});
+    saveState();
+    bg.remove();
+    render();
+  });
+}
+
+function openPaySalaryModal(workerId, netSuggested){
+  const w = state.workers.find(x=>x.id===workerId);
+  const parts = currentPeriodParts();
+  const scopeLabel = w.payFreq==='monthly'
+    ? periodBottomLabel(parts) + ' (పూర్తి నెల)'
+    : periodTopLabel(parts) + ' ' + periodBottomLabel(parts);
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>జీతం చెల్లించారు — ${w.te}</h3>
+      <div class="wn-hint">${w.name} · ${scopeLabel}<br>లెక్క ప్రకారం చెల్లించవలసినది: <b>${fmtRupee(netSuggested)}</b></div>
+      <div class="field"><label>చెల్లించిన తేదీ (Date paid)</label><input type="date" id="pyDate" value="${todayStr()}"></div>
+      <div class="field"><label>చెల్లించిన మొత్తం (Amount paid ₹)</label><input type="number" inputmode="numeric" id="pyAmt" value="${netSuggested}"></div>
+      <div class="field"><label>నోట్ (Note, optional — cash / GPay / bank)</label><input type="text" id="pyNote" placeholder=""></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="pyCancel">రద్దు</button>
+        <button class="btn primary" id="pySave">సేవ్</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('#pyCancel').addEventListener('click', ()=> bg.remove());
+  bg.addEventListener('click', (e)=>{ if(e.target===bg) bg.remove(); });
+  bg.querySelector('#pySave').addEventListener('click', ()=>{
+    setPayment(w, parts, {
+      date: bg.querySelector('#pyDate').value || todayStr(),
+      amount: Number(bg.querySelector('#pyAmt').value)||0,
+      note: bg.querySelector('#pyNote').value.trim(),
+      at: Date.now()
+    });
+    saveState();
+    bg.remove();
+    render();
+  });
+}
+
+function openAddWorkerModal(){
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.innerHTML = `
+    <div class="modal">
+      <h3>కొత్త సిబ్బంది (New worker)</h3>
+      <div class="field"><label>పేరు తెలుగులో (Telugu name)</label><input type="text" id="newTe"></div>
+      <div class="field"><label>Name (English)</label><input type="text" id="newEn"></div>
+      <div class="field"><label>Role (e.g. Chef, Cleaner)</label><input type="text" id="newRole"></div>
+      <div class="field"><label>చెల్లింపు ఫ్రీక్వెన్సీ (Pay frequency)</label>
+        <select id="newFreq">
+          <option value="biweekly">బైవీక్లీ (every 2 weeks · paid per day)</option>
+          <option value="monthly">నెలవారీ (once a month · fixed salary)</option>
+        </select>
+      </div>
+      <div class="field"><label id="newRateLabel">రోజు జీతం (Salary per day ₹)</label><input type="number" inputmode="numeric" id="newRate" value="500"></div>
+      <div class="field" id="newMonthlyWrap" style="display:none">
+        <label>నెలవారీ జీతం (Fixed monthly salary ₹)</label>
+        <input type="number" inputmode="numeric" id="newMonthly" value="12000">
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="wCancel">రద్దు</button>
+        <button class="btn primary" id="wSave">సేవ్</button>
+      </div>
+    </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('#newFreq').addEventListener('change', (e)=>{
+    const monthly = e.target.value==='monthly';
+    bg.querySelector('#newRateLabel').textContent = monthly
+      ? 'రోజు జీతం (1 రోజు గైర్హాజరు కోత ₹)' : 'రోజు జీతం (Salary per day ₹)';
+    bg.querySelector('#newMonthlyWrap').style.display = monthly ? '' : 'none';
+  });
+  bg.querySelector('#wCancel').addEventListener('click', ()=> bg.remove());
+  bg.addEventListener('click', (e)=>{ if(e.target===bg) bg.remove(); });
+  bg.querySelector('#wSave').addEventListener('click', ()=>{
+    const en = bg.querySelector('#newEn').value.trim();
+    const te = bg.querySelector('#newTe').value.trim() || en;
+    const role = bg.querySelector('#newRole').value.trim();
+    const rate = Number(bg.querySelector('#newRate').value)||0;
+    if(!en){ alert('పేరు నమోదు చేయండి'); return; }
+    const id = en.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+Date.now();
+    const payFreq = bg.querySelector('#newFreq').value;
+    const worker = {id, name:en, te, role, payFreq, dayRate:rate};
+    if(payFreq==='monthly') worker.monthly = Number(bg.querySelector('#newMonthly').value)||0;
+    state.workers.push(worker);
+    saveState();
+    bg.remove();
+    render();
+  });
+}
+
+// ---- nav ----
+document.querySelectorAll('nav.tabbar button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab = btn.dataset.tab;
+    render();
+  });
+});
+document.getElementById('prevPeriod').addEventListener('click', ()=>{ periodOffset--; render(); });
+document.getElementById('nextPeriod').addEventListener('click', ()=>{ periodOffset++; render(); });
+
+// ---- init ----
+(async function init(){
+  try{
+    await withTimeout(loadState(), 6000);
+  }catch(e){
+    console.error('load failed, falling back to defaults', e);
+    state = {workers: DEFAULT_WORKERS.map(w=>Object.assign({},w)), attendance:{}, advances:[], warnings:[], payments:{}, tips:{}, seedVersion:0};
+    try{ applySeedData(); }catch(e2){}
+  }
+  try{
+    render();
+  }catch(e){
+    console.error('render failed', e);
+    document.getElementById('mainArea').innerHTML =
+      '<div class="empty">Something went wrong loading the app.<br>Please close and reopen it.</div>';
+  }
+  startSync();
+})();
+</script>
+</body>
+</html>
